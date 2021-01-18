@@ -1,4 +1,4 @@
-# CZ3002 camera
+# CZ3002 backend
 
 ## how to run
 
