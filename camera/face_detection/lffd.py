@@ -83,10 +83,19 @@ class LFFD:
     '''
     def __init__(
         self,
-        context,
-        symbol_file_path,
-        model_file_path,
+        context: mx.Context,
+        symbol_file_path: str,
+        model_file_path: str,
+        input_height: int = 480,
+        input_width: int = 640,
     ):
+        '''
+        :param context: (mx.Context) MXNet's GPU / CPU context
+
+        :param input_height: (int) input height of the model
+
+        :param input_width: (int) input width of the model
+        '''
         self.context = context
 
         self.receptive_field_list = config.param_receptive_field_list
@@ -98,8 +107,8 @@ class LFFD:
         
         self.constant = [i / 2.0 for i in self.receptive_field_list]
 
-        self.input_height = 480
-        self.input_width = 640
+        self.input_height = input_height
+        self.input_width = input_width
 
         self.model = self.__load_model(symbol_file_path, model_file_path)
 
@@ -151,16 +160,20 @@ class LFFD:
 
     def predict(
         self,
-        image,
-        resize_scale=1,
-        score_threshold=0.8,
-        top_k=100,
-        NMS_threshold=0.3,
-        NMS_flag=True,
-        skip_scale_branch_list=[],
+        image: np.ndarray,
+        resize_scale: float = 1,
+        score_threshold: float = 0.8,
+        top_k: int = 100,
+        NMS_threshold: float = 0.3,
+        NMS_flag: bool = True,
+        skip_scale_branch_list: list = [],
     ):
         '''
         Forward pass / inference
+
+        :param image: (np.ndarray) input image
+
+        :return: (tuple of floats) top_left_x, top_left_y, bottom_right_x, bottom_right_y, confidence
         '''
         if image.ndim != 3 or image.shape[2] != 3:
             print('Only RGB images are supported.')

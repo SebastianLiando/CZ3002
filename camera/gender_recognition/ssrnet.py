@@ -18,6 +18,13 @@ class SSRNet:
         input_height: int = 64,
         input_width: int = 64
     ):
+        '''
+        :param context: (mx.Context) MXNet's GPU / CPU context
+
+        :param input_height: (int) input height of the model
+
+        :param input_width: (int) input width of the model
+        '''
         self.input_height = input_height
         self.input_width = input_width
 
