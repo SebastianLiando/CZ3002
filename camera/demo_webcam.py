@@ -109,11 +109,14 @@ def main(args):
             skip_scale_branch_list=[],
         )
 
-        if args.debug:
-            for bbox in bboxes:
-                confidence = bbox[-1]
-                bbox = tuple(map(int, bbox[:4]))  # convert to int
+        for bbox in bboxes:
+            confidence = bbox[-1]
+            bbox = tuple(map(int, bbox[:4]))  # convert to int
 
+            face = frame[bbox[1]: bbox[3], bbox[0]: bbox[2]]
+            gender = gender_recogniser.predict(face)
+
+            if args.debug:
                 frame = cv2.rectangle(
                     frame,
                     (bbox[0], bbox[1]),  # top-left point
@@ -121,9 +124,6 @@ def main(args):
                     color=(0, 255, 0),  # green
                     thickness=2,
                 )
-
-                face = frame[bbox[1]: bbox[3], bbox[0]: bbox[2]]
-                gender = gender_recogniser.predict(face)
 
                 frame = cv2.putText(
                     frame,
@@ -135,6 +135,7 @@ def main(args):
                     thickness=2,
                 )
 
+        if args.debug:
             cv2.imshow('camera', frame)
 
         if cv2.waitKey(1) == ord('q'):  # press q to stop
