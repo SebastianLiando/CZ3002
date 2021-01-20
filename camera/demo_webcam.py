@@ -22,16 +22,14 @@ def parse_args():
 
     parser.add_argument(
         '--debug',
-        type=bool,
-        default=True,
+        action='store_true',
         help='whether to run in debug mode'
     )
 
     parser.add_argument(
-        '--use_gpu',
-        type=bool,
-        default=True,
-        help='whether to use gpu; poor results on cpu',
+        '--use_cpu',
+        action='store_true',
+        help='whether to use cpu (poor results)',
     )
 
     parser.add_argument(
@@ -68,7 +66,16 @@ def main(args):
         print('failed to open camera')
         return
 
-    context = mx.gpu(0) if args.use_gpu else mx.cpu()
+    # context = mx.gpu(0) if args.use_gpu else mx.cpu()
+
+    if args.use_cpu:
+        print('using CPU')
+        context = mx.cpu()
+    else:
+        print('using GPU')
+        context = mx.gpu(0)
+    
+    print()
 
     if not os.path.exists(args.lffd_symbol_file_path):
         print('The symbol file does not exist!')
@@ -92,57 +99,63 @@ def main(args):
         epoch=0,
     )
 
-    while True:
-        read_success, frame = video_capture.read()
+    try:
+        while True:
+            read_success, frame = video_capture.read()
 
-        if not read_success:
-            print('failed to read next frame from camera')
-            break
+            if not read_success:
+                print('failed to read next frame from camera')
+                break
 
-        bboxes = face_detector.predict(
-            frame,
-            resize_scale=1,
-            score_threshold=0.6,
-            top_k=20,
-            NMS_threshold=0.4,
-            NMS_flag=True,
-            skip_scale_branch_list=[],
-        )
+            bboxes = face_detector.predict(
+                frame,
+                resize_scale=1,
+                score_threshold=0.6,
+                top_k=20,
+                NMS_threshold=0.4,
+                NMS_flag=True,
+                skip_scale_branch_list=[],
+            )
 
-        for bbox in bboxes:
-            confidence = bbox[-1]
-            bbox = tuple(map(int, bbox[:4]))  # convert to int
+            for bbox in bboxes:
+                confidence = bbox[-1]
+                bbox = tuple(map(int, bbox[:4]))  # convert to int
 
-            face = frame[bbox[1]: bbox[3], bbox[0]: bbox[2]]
-            gender = gender_recogniser.predict(face)
+                if bbox[2] <= bbox[0] or bbox[3] <= bbox[1]:
+                    continue  # empty bbox
+
+                face = frame[bbox[1]: bbox[3], bbox[0]: bbox[2]]
+                gender = gender_recogniser.predict(face)
+
+                if args.debug:
+                    frame = cv2.rectangle(
+                        frame,
+                        (bbox[0], bbox[1]),  # top-left point
+                        (bbox[2], bbox[3]),  # bottom-right point
+                        color=(0, 255, 0),  # green
+                        thickness=2,
+                    )
+
+                    frame = cv2.putText(
+                        frame,
+                        f'{gender} {confidence:.2f}',
+                        (bbox[0], bbox[1] + 25),  # top-left point
+                        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                        fontScale=1,
+                        color=(0, 255, 0),  # green
+                        thickness=2,
+                    )
 
             if args.debug:
-                frame = cv2.rectangle(
-                    frame,
-                    (bbox[0], bbox[1]),  # top-left point
-                    (bbox[2], bbox[3]),  # bottom-right point
-                    color=(0, 255, 0),  # green
-                    thickness=2,
-                )
+                cv2.imshow('camera', frame)
 
-                frame = cv2.putText(
-                    frame,
-                    f'{gender} {confidence:.2f}',
-                    (bbox[0], bbox[1] + 25),  # top-left point
-                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                    fontScale=1,
-                    color=(0, 255, 0),  # green
-                    thickness=2,
-                )
-
-        if args.debug:
-            cv2.imshow('camera', frame)
-
-        if cv2.waitKey(1) == ord('q'):  # press q to stop
-            break
-
-    video_capture.release()
-    cv2.destroyAllWindows()
+            if cv2.waitKey(1) == ord('q'):  # press q to stop
+                break
+    except KeyboardInterrupt:
+        print('stopping camera...')
+    finally:
+        video_capture.release()
+        cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
