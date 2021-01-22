@@ -19,7 +19,8 @@ Use a computer's webcam as the surveillance camera.
 
 1. activate virtual environment: `conda activate cz3002_venv`
 2. run the demo: `python demo_webcam.py`
-    - press 'q' key to stop demo
+    - view parameters: `python demo_webcam.py --help`
+    - press 'q' key (or 'ctrl-c') to stop demo
 3. deactivate virtual environment when done: `conda deactivate`
 
 ## TODO
