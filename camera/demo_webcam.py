@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument(
         '--use_cpu',
         action='store_true',
-        help='whether to use cpu (poor results)',
+        help='whether to use cpu (poor detection)',
     )
 
     parser.add_argument(
@@ -59,32 +59,16 @@ def parse_args():
 def main(args):
     '''
     The main program
-    '''
+    '''   
     video_capture = cv2.VideoCapture(0)
 
     if not video_capture.isOpened():
         print('failed to open camera')
         return
 
-    # context = mx.gpu(0) if args.use_gpu else mx.cpu()
-
-    if args.use_cpu:
-        print('using CPU')
-        context = mx.cpu()
-    else:
-        print('using GPU')
-        context = mx.gpu(0)
+    context = mx.cpu() if args.use_cpu else mx.gpu()
+    print(f'using {context.device_type}\n')
     
-    print()
-
-    if not os.path.exists(args.lffd_symbol_file_path):
-        print('The symbol file does not exist!')
-        exit(1)
-    
-    if not os.path.exists(args.lffd_model_file_path):
-        print('The model file does not exist!')
-        exit(1)
-
     face_detector = LFFD(
         context=context,
         symbol_file_path=args.lffd_symbol_file_path,
@@ -145,7 +129,7 @@ def main(args):
                         color=(0, 255, 0),  # green
                         thickness=2,
                     )
-
+            
             if args.debug:
                 cv2.imshow('camera', frame)
 
@@ -160,5 +144,14 @@ def main(args):
 
 if __name__ == '__main__':
     args = parse_args()
+
+    if not os.path.exists(args.lffd_symbol_file_path):
+        print('The symbol file does not exist!')
+        exit(1)
+    
+    if not os.path.exists(args.lffd_model_file_path):
+        print('The model file does not exist!')
+        exit(1)
+    
     main(args)
     print('\ncamera stopped')
