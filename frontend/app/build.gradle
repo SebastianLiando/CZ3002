@@ -51,6 +51,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
@@ -60,6 +61,7 @@ dependencies {
 
     // Kotlin Coroutine
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_android_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutines_android_version"
 
     // Lifecycle Component
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
@@ -88,16 +90,16 @@ dependencies {
     implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
 
     // Firebase Authentication
-    implementation "com.google.firebase:firebase-auth"
+    implementation "com.google.firebase:firebase-auth-ktx"
 
     // Firebase RTD
-    implementation "com.google.firebase:firebase-database"
+    implementation "com.google.firebase:firebase-database-ktx"
 
     // Firebase Cloud Messaging
-    implementation "com.google.firebase:firebase-messaging"
+    implementation "com.google.firebase:firebase-messaging-ktx"
 
     // Firebase Storage
-    implementation "com.google.firebase:firebase-storage"
+    implementation "com.google.firebase:firebase-storage-ktx"
 
 }
 
