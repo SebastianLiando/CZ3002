@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">CZ3002</string>
 
+    <string name="label_login">Please Sign In</string>
+
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+
+    <string name="error_empty">This field cannot be empty!</string>
+
+    <string name="button_login">Sign In</string>
+
+    <string name="snack_bar_login_failed">Failed to login! Please try again</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
