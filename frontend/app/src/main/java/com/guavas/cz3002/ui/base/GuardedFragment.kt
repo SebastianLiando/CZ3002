@@ -5,9 +5,9 @@ import android.view.View
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.lifecycleScope
 import com.guavas.cz3002.extension.android.navigate
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 /**
@@ -28,16 +28,26 @@ abstract class GuardedFragment<T : ViewDataBinding> : BindingFragment<T>() {
     /** This function should create the [Flow] for the login state. */
     abstract fun createLoginState(): Flow<Boolean>
 
+    private lateinit var guard: Job
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
+        guard = lifecycleScope.launchWhenResumed {
             loginState.collect { loggedIn ->
                 if (!loggedIn) {
                     Timber.d("User not logged in! Navigating to login fragment")
                     view.navigate(loginDestinationId)
                 }
             }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        if (::guard.isInitialized) {
+            guard.cancel()
         }
     }
 }

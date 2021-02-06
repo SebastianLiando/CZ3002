@@ -1,12 +1,14 @@
 package com.guavas.cz3002.ui.auth
 
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.transition.MaterialSharedAxis
 import com.guavas.cz3002.R
 import com.guavas.cz3002.databinding.FragmentLoginBinding
 import com.guavas.cz3002.extension.android.closeActivity
@@ -34,7 +36,6 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>() {
                 closeActivity()
             } else {
                 // Prevent this callback from being called again when the back button is pressed
-                Timber.d("Entered login although already logged in?!")
                 isEnabled = false
 
                 pressBackButton()
@@ -46,6 +47,13 @@ class LoginFragment : BindingFragment<FragmentLoginBinding>() {
         super.onAttach(context)
 
         requireActivity().onBackPressedDispatcher.addCallback(this, backButtonHandler)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+        reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
     }
 
     fun onClickSignIn(v: View) {
