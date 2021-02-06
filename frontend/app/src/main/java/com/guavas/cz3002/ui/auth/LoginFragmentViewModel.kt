@@ -2,7 +2,6 @@ package com.guavas.cz3002.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,8 +35,6 @@ class LoginFragmentViewModel @Inject constructor(
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     _isLoading.value = false
-
-                    it.result?.credential
 
                     if (it.isSuccessful) {
                         cont.resume(true)
