@@ -20,5 +20,7 @@
 
     <string name="menu_profile">User Profile</string>
 
-    <string name="violation_notification_channel_id">Violations</string>
+    <string name="violation_notification_channel_id">com.guavas.cz3002.Violations</string>
+    <string name="violation_notification_channel_name">Violations</string>
+    <string name="violation_notification_title">New Violation Detected!</string>
 </resources>
