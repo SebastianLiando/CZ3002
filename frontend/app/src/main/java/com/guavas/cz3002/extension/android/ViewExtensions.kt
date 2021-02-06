@@ -47,6 +47,6 @@ fun View.dynamicVisibility(isVisible: Boolean?) {
  * @param isVisible The new visibility.
  */
 @BindingAdapter("canVisible")
-fun View.dynamicInvisibleVisibility(isVisible: Boolean) {
-    visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
+fun View.dynamicInvisibleVisibility(isVisible: Boolean?) {
+    visibility = if (isVisible != null && isVisible) View.VISIBLE else View.INVISIBLE
 }

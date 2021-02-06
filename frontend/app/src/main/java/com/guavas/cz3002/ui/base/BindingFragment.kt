@@ -7,17 +7,13 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import com.guavas.cz3002.ui.activity.MainActivityViewModel
 import com.guavas.cz3002.utils.tryAssignBinding
 
 /**
  * The base class for all [Fragment] that uses data binding. This class also tries to automatically
- * assigns this fragment and the activity's view model to the binding object.
+ * assigns this fragment to the binding object using reflection.
  *
  * To auto assign fragment, name the variable as "fragment".
- *
- * To auto assign activity view model, name the variable as "activityModel".
  *
  * To set data to the fragment at the beginning, call [onBinding].
  *
@@ -25,8 +21,6 @@ import com.guavas.cz3002.utils.tryAssignBinding
  * @param T The generated binding class.
  */
 abstract class BindingFragment<T : ViewDataBinding> : Fragment() {
-    val mainViewModel by activityViewModels<MainActivityViewModel>()
-
     protected lateinit var binding: T
 
     abstract val layoutId: Int
@@ -69,8 +63,5 @@ abstract class BindingFragment<T : ViewDataBinding> : Fragment() {
     private fun onBindingReflection(binding: T) {
         // Set fragment
         tryAssignBinding("setFragment", this::class.java, binding, this)
-
-        // Set shared view model
-        tryAssignBinding("setActivityModel", mainViewModel::class.java, binding, mainViewModel)
     }
 }
