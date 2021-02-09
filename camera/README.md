@@ -12,7 +12,7 @@ Use a computer's webcam as the surveillance camera.
 
 1. create the virtual environment: `conda create --name cz3002_venv --file cz3002_venv.txt`
 2. activate virtual environment: `conda activate cz3002_venv`
-3. install MXNet: `pip install mxnet-cu102mkl`
+3. install MXNet: `pip install mxnet-cu102`
 4. deactivate virtual environment when done: `conda deactivate`
 
 ## how to run demo
@@ -25,4 +25,5 @@ Use a computer's webcam as the surveillance camera.
 
 ## TODO
 
-send image to server
+- send image to server
+- fix LFFD not working on CPU

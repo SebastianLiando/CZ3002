@@ -54,7 +54,7 @@ class SSRNet:
         print('loaded SSR-Net successfully\n')
         return module
     
-    def predict(self, image: np.ndarray) -> str:
+    def predict(self, image: np.ndarray) -> (str, float):
         '''
         Forward pass / inference
 
@@ -77,6 +77,8 @@ class SSRNet:
         ))
 
         self.model.forward(data_batch, is_train=False)
-        gender = self.model.get_outputs()[0].asnumpy()
 
-        return 'male' if gender[0] > 0.5 else 'female'
+        gender_score = float(self.model.get_outputs()[0].asnumpy()[0])
+        gender = 'male' if gender_score > 0.5 else 'female'
+
+        return gender, gender_score

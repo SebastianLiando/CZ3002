@@ -29,28 +29,35 @@ def parse_args():
     parser.add_argument(
         '--use_cpu',
         action='store_true',
-        help='whether to use cpu (poor detection)',
+        help='whether to use cpu (does not work currently)',
     )
 
     parser.add_argument(
         '--lffd_symbol_file_path',
         type=str,
         default='face_detection/model/symbol_10_560_25L_8scales_v1_deploy.json',
-        help='path to symbol file for face detection model',
+        help='path to symbol file of face detection model',
     )
 
     parser.add_argument(
         '--lffd_model_file_path',
         type=str,
         default='face_detection/model/train_10_560_25L_8scales_v1_iter_1400000.params',
-        help='path to model params for face detection model',
+        help='path to model params of face detection model',
     )
 
     parser.add_argument(
         '--ssrnet_prefix',
         type=str,
         default='gender_recognition/ssr2_imdb_gender/model',
-        help='prefix for gender recognition model',
+        help='prefix (path) for gender recognition model',
+    )
+
+    parser.add_argument(
+        '--ssrnet_epoch_num',
+        type=int,
+        default=0,
+        help='epoch at which gender recognition model was saved',
     )
 
     return parser.parse_args()
@@ -75,12 +82,10 @@ def main(args):
         model_file_path=args.lffd_model_file_path,
     )
 
-    # TODO: check params and symbol for SSRNet exist
-
     gender_recogniser = SSRNet(
         context=context,
         prefix=args.ssrnet_prefix,
-        epoch=0,
+        epoch=args.ssrnet_epoch_num,
     )
 
     try:
@@ -94,8 +99,8 @@ def main(args):
             bboxes = face_detector.predict(
                 frame,
                 resize_scale=1,
-                score_threshold=0.6,
-                top_k=20,
+                score_threshold=0.9,
+                top_k=5,
                 NMS_threshold=0.4,
                 NMS_flag=True,
                 skip_scale_branch_list=[],
@@ -109,7 +114,7 @@ def main(args):
                     continue  # empty bbox
 
                 face = frame[bbox[1]: bbox[3], bbox[0]: bbox[2]]
-                gender = gender_recogniser.predict(face)
+                gender, gender_score = gender_recogniser.predict(face)
 
                 if args.debug:
                     frame = cv2.rectangle(
@@ -122,7 +127,7 @@ def main(args):
 
                     frame = cv2.putText(
                         frame,
-                        f'{gender} {confidence:.2f}',
+                        f'{gender} {confidence:.2f} {gender_score:.2f}',
                         (bbox[0], bbox[1] + 25),  # top-left point
                         fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                         fontScale=1,
