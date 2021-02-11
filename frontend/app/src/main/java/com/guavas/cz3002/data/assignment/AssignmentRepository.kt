@@ -19,14 +19,14 @@ class AssignmentRepository @Inject constructor(private val database: FirebaseDat
      * @param uid The signed-in user's uid.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getAssignment(uid: String) = callbackFlow<Assignment> {
+    fun getAssignment(uid: String) = callbackFlow<Assignment?> {
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 snapshot.children.firstOrNull()
                     ?.getValue<Assignment>()
                     ?.let { data ->
                         sendBlocking(data)
-                    }
+                    } ?: sendBlocking(null)
             }
 
             override fun onCancelled(error: DatabaseError) {

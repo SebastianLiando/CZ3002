@@ -64,7 +64,7 @@ class ViolationsFragment : GuardedFragment<FragmentViolationsBinding>() {
 
         lifecycleScope.launch {
             mainViewModel.violations.collect {
-                it.forEach { Timber.d("$it") }
+                it?.forEach { Timber.d("$it") }
             }
         }
     }

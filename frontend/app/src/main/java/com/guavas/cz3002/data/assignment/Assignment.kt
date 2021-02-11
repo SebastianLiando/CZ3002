@@ -8,5 +8,5 @@ package com.guavas.cz3002.data.assignment
  */
 data class Assignment(
     var user: String = "",
-    var location: String = ""
+    var location: String? = null
 )
