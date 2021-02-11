@@ -1,6 +1,7 @@
 package com.guavas.cz3002.dependency
 
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import dagger.Module
@@ -17,4 +18,6 @@ class ApplicationModule {
     @Provides
     fun provideFirebaseMessaging() = Firebase.messaging
 
+    @Provides
+    fun provideFirebaseDatabase() = Firebase.database
 }

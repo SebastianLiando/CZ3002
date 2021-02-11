@@ -15,6 +15,8 @@
 
     <string name="button_login">Sign In</string>
     <string name="button_logout">Sign Out</string>
+    <string name="button_approve">Approve</string>
+    <string name="button_reject">Reject</string>
 
     <string name="snack_bar_login_failed">Failed to login! Please try again</string>
 
@@ -23,4 +25,7 @@
     <string name="violation_notification_channel_id">com.guavas.cz3002.Violations</string>
     <string name="violation_notification_channel_name">Violations</string>
     <string name="violation_notification_title">New Violation Detected!</string>
+
+    <string name="content_desc_toilet_gender">The toilet gender</string>
+    <string name="content_desc_violation_image">The violation image</string>
 </resources>
