@@ -14,6 +14,7 @@ import com.guavas.cz3002.R
 import com.guavas.cz3002.databinding.FragmentViolationsBinding
 import com.guavas.cz3002.extension.android.createNotificationChannel
 import com.guavas.cz3002.ui.activity.MainActivityViewModel
+import com.guavas.cz3002.ui.adapter.ViolationAdapter
 import com.guavas.cz3002.ui.base.GuardedFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -24,7 +25,7 @@ import timber.log.Timber
 @AndroidEntryPoint
 class ViolationsFragment : GuardedFragment<FragmentViolationsBinding>() {
     private val mainViewModel by activityViewModels<MainActivityViewModel>()
-    private val viewModel by viewModels<ViolationsFragmentViewModel>()
+    val viewModel by viewModels<ViolationsFragmentViewModel>()
     override val layoutId = R.layout.fragment_violations
 
     override val menuResId = R.menu.main_menu
@@ -63,9 +64,41 @@ class ViolationsFragment : GuardedFragment<FragmentViolationsBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         lifecycleScope.launch {
-            mainViewModel.violations.collect {
-                it?.forEach { Timber.d("$it") }
+            mainViewModel.assignment.collect { assignment ->
+                if (assignment?.location == null) {
+                    viewModel.updateLoading(false)
+                } else {
+                    assignment.location?.let(viewModel::setAssignedLocation)
+                }
             }
         }
+
+        val violationAdapter = ViolationAdapter(owner = viewLifecycleOwner,
+            onClickViolation = {
+                Timber.d("Navigating to details of violation ${it.id}")
+            }, onVerifyViolation = { violation, isTrue ->
+                Timber.d("Violation $violation $isTrue")
+            })
+
+        binding.recyclerViewViolations.adapter = violationAdapter
+
+        lifecycleScope.launch {
+            viewModel.violations.collect {
+                it?.let { violations ->
+                    Timber.d("Found ${violations.size} violations!")
+                    it.forEach { v -> Timber.d("$v") }
+                    viewModel.updateLoading(false)
+
+                    violationAdapter.submitList(violations)
+                }
+            }
+        }
+    }
+
+    override fun onNavigateToGuardDestination(destId: Int) {
+        super.onNavigateToGuardDestination(destId)
+
+        viewModel.updateLoading(true)
+        viewModel.setAssignedLocation("")
     }
 }

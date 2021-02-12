@@ -3,6 +3,8 @@
 
     <data>
 
+        <import type="com.guavas.cz3002.utils.Gender" />
+
         <variable
             name="violation"
             type="com.guavas.cz3002.data.violation.Violation" />
@@ -13,7 +15,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_margin="8dp"
         app:cardCornerRadius="8dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,9 +26,10 @@
             <ImageView
                 android:id="@+id/imageViolation"
                 android:layout_width="0dp"
-                android:layout_height="250dp"
+                android:layout_height="160dp"
                 android:contentDescription="@string/content_desc_violation_image"
                 android:scaleType="centerCrop"
+                android:src="@android:color/darker_gray"
                 app:layout_constraintDimensionRatio="1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -39,6 +42,7 @@
                 android:layout_height="40dp"
                 android:layout_marginTop="8dp"
                 android:contentDescription="@string/content_desc_toilet_gender"
+                android:src="@{violation.locationGenderEnum == Gender.MALE ? @drawable/male_toilet : @drawable/female_toilet}"
                 app:layout_constraintDimensionRatio="1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -48,42 +52,42 @@
             <androidx.constraintlayout.widget.Group
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:constraint_referenced_ids="buttonApprove,buttonReject" />
+                app:constraint_referenced_ids="buttonApprove,buttonReject"
+                app:isVisible="@{!violation.isVerified}" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonApprove"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/button_approve"
-                app:layout_constraintEnd_toStartOf="@id/buttonReject"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/imageToiletGender" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonReject"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/button_reject"
-                app:layout_constraintBottom_toBottomOf="@id/buttonApprove"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/buttonApprove"
-                app:layout_constraintTop_toTopOf="@id/buttonApprove" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buttonApprove" />
 
             <com.google.android.material.textview.MaterialTextView
                 style="@style/TextAppearance.MaterialComponents.Body1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:text="@{violation.elapsedTime}"
                 android:textAlignment="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/buttonApprove"
+                app:layout_constraintTop_toBottomOf="@id/buttonReject"
                 tools:text="47 minutes ago" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </com.google.android.material.card.MaterialCardView>
 </layout>

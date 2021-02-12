@@ -13,6 +13,11 @@
     <string name="label_yes">Yes</string>
     <string name="label_no">No</string>
 
+    <string name="label_no_task_title">Not Assigned!</string>
+    <string name="label_no_task_body">You have not been assigned a location, please contact your supervisor.</string>
+    <string name="label_no_violation_title">No Violation!</string>
+    <string name="label_no_violation_body">There are no violations for this location</string>
+
     <string name="button_login">Sign In</string>
     <string name="button_logout">Sign Out</string>
     <string name="button_approve">Approve</string>
@@ -28,4 +33,6 @@
 
     <string name="content_desc_toilet_gender">The toilet gender</string>
     <string name="content_desc_violation_image">The violation image</string>
+    <string name="content_desc_ic_info">Information icon</string>
+    <string name="content_desc_ic_location">Assigned location icon</string>
 </resources>

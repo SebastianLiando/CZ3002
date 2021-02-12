@@ -37,6 +37,7 @@ abstract class GuardedFragment<T : ViewDataBinding> : BindingFragment<T>() {
             loginState.collect { loggedIn ->
                 if (!loggedIn) {
                     Timber.d("User not logged in! Navigating to login fragment")
+                    onNavigateToGuardDestination(loginDestinationId)
                     view.navigate(loginDestinationId)
                 }
             }
@@ -50,4 +51,11 @@ abstract class GuardedFragment<T : ViewDataBinding> : BindingFragment<T>() {
             guard.cancel()
         }
     }
+
+    /**
+     * This function is called just before going to the login screen.
+     *
+     * @param destId The login screen destination id.
+     */
+    open fun onNavigateToGuardDestination(destId: Int) {}
 }

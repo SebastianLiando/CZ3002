@@ -21,7 +21,6 @@ class MainActivityViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
     private val firebaseMessaging: FirebaseMessaging,
     private val assignmentRepo: AssignmentRepository,
-    private val violationRepo: ViolationRepository,
     private val preferencesRepo: PreferencesRepository,
 ) : ViewModel() {
     private val _currentUser = MutableStateFlow(firebaseAuth.currentUser)
@@ -31,17 +30,9 @@ class MainActivityViewModel @Inject constructor(
 
     /** Holds the toilet location that the current user is assigned to. Assignment is null means that
      * the security guard is not assigned to any location. */
-    private val assignment = currentUser
+    val assignment = currentUser
         .map { user -> user?.uid }
         .flatMapLatest { uid -> uid?.let { assignmentRepo.getAssignment(it) } ?: flowOf(null) }
-
-    /** Contains violations of the assigned location. Violation is null means that the security guard
-     * is not assigned to any location. Empty list means that there is no violation. */
-    val violations = assignment.flatMapConcat { assignment ->
-        assignment?.location?.let { location ->
-            violationRepo.getViolations(location)
-        } ?: flowOf(null)
-    }
 
     /** Listens to user sign in and sign out. */
     private val authListener = FirebaseAuth.AuthStateListener { auth ->
@@ -51,10 +42,7 @@ class MainActivityViewModel @Inject constructor(
     init {
         firebaseAuth.addAuthStateListener(authListener)
 
-        viewModelScope.launch {
-            currentUser.collect { Timber.d("Current user ${it?.uid}") }
-        }
-
+        // Manage Firebase Cloud Messaging subscription
         viewModelScope.launch {
             assignment.collect { assigned ->
                 Timber.d("Assigned: $assigned")

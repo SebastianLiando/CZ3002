@@ -28,7 +28,7 @@ data class Violation(
     var imageId: String = "",
     var locationGender: Int = -1,
     var detectedGender: Int = -1,
-    var timestamp: Float = -1f,
+    var timestamp: Double = -1.0,
 ) {
     /** Returns `true` if this violation is a false positive. */
     val isFalsePositive
@@ -58,7 +58,7 @@ data class Violation(
         get() = flow {
             while (true) {
                 val span = DateUtils.getRelativeTimeSpanString(
-                    timestamp.toLong(),
+                    (timestamp * 1000).toLong(), // Add millisecond to consideration
                     Date().time,
                     DateUtils.MINUTE_IN_MILLIS
                 )
