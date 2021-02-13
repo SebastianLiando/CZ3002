@@ -7,8 +7,10 @@ import mxnet as mx
 import numpy as np
 import os
 
+from camera import Camera
 from face_detection.lffd import LFFD
 from gender_recognition.ssrnet import SSRNet
+from violation_handling.notifier import Notifier
 
 
 def parse_args():
@@ -67,12 +69,6 @@ def main(args):
     '''
     The main program
     '''   
-    video_capture = cv2.VideoCapture(0)
-
-    if not video_capture.isOpened():
-        print('failed to open camera')
-        return
-
     context = mx.cpu() if args.use_cpu else mx.gpu()
     print(f'using {context.device_type}\n')
     
@@ -88,63 +84,10 @@ def main(args):
         epoch=args.ssrnet_epoch_num,
     )
 
-    try:
-        while True:
-            read_success, frame = video_capture.read()
+    notifier = Notifier()
 
-            if not read_success:
-                print('failed to read next frame from camera')
-                break
-
-            bboxes = face_detector.predict(
-                frame,
-                resize_scale=1,
-                score_threshold=0.9,
-                top_k=5,
-                NMS_threshold=0.4,
-                NMS_flag=True,
-                skip_scale_branch_list=[],
-            )
-
-            for bbox in bboxes:
-                confidence = bbox[-1]
-                bbox = tuple(map(int, bbox[:4]))  # convert to int
-
-                if bbox[2] <= bbox[0] or bbox[3] <= bbox[1]:
-                    continue  # empty bbox
-
-                face = frame[bbox[1]: bbox[3], bbox[0]: bbox[2]]
-                gender, gender_score = gender_recogniser.predict(face)
-
-                if args.debug:
-                    frame = cv2.rectangle(
-                        frame,
-                        (bbox[0], bbox[1]),  # top-left point
-                        (bbox[2], bbox[3]),  # bottom-right point
-                        color=(0, 255, 0),  # green
-                        thickness=2,
-                    )
-
-                    frame = cv2.putText(
-                        frame,
-                        f'{gender} {confidence:.2f} {gender_score:.2f}',
-                        (bbox[0], bbox[1] + 25),  # top-left point
-                        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                        fontScale=1,
-                        color=(0, 255, 0),  # green
-                        thickness=2,
-                    )
-            
-            if args.debug:
-                cv2.imshow('camera', frame)
-
-            if cv2.waitKey(1) == ord('q'):  # press q to stop
-                break
-    except KeyboardInterrupt:
-        print('stopping camera...')
-    finally:
-        video_capture.release()
-        cv2.destroyAllWindows()
+    camera = Camera('0', 'female', face_detector, gender_recogniser, notifier)
+    camera.run(args)
 
 
 if __name__ == '__main__':
