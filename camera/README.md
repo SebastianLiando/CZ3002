@@ -12,8 +12,10 @@ Use a computer's webcam as the surveillance camera.
 
 1. create the virtual environment: `conda create --name cz3002_venv --file cz3002_venv.txt`
 2. activate virtual environment: `conda activate cz3002_venv`
-3. install MXNet: `pip install mxnet-cu102`
+3. install pip dependencies: `pip install -r requirements.txt`
 4. deactivate virtual environment when done: `conda deactivate`
+5. get your Firebase Service Account key and save it in the directory `violation_handling` as `key.json`
+6. create `config.json` in the directory `violation_handling` with `{"project_id": "<project_id>"}`
 
 ## how to run demo
 

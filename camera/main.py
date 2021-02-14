@@ -35,6 +35,27 @@ def parse_args():
     )
 
     parser.add_argument(
+        '--camera_id',
+        type=str,
+        default='0',
+        help='id of the camera',
+    )
+
+    parser.add_argument(
+        '--toilet_gender',
+        type=str,
+        default='female',
+        help='the gender of the toilet being monitored by the camera',
+    )
+
+    parser.add_argument(
+        '--notification_interval',
+        type=int,
+        default=5,
+        help='time interval (in seconds) between each notification',
+    )
+
+    parser.add_argument(
         '--lffd_symbol_file_path',
         type=str,
         default='face_detection/model/symbol_10_560_25L_8scales_v1_deploy.json',
@@ -86,7 +107,14 @@ def main(args):
 
     notifier = Notifier()
 
-    camera = Camera('0', 'female', face_detector, gender_recogniser, notifier)
+    camera = Camera(
+        args.camera_id,
+        args.toilet_gender,
+        args.notification_interval,
+        face_detector,
+        gender_recogniser,
+        notifier,
+    )
     camera.run(args)
 
 

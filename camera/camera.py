@@ -13,17 +13,20 @@ class Camera:
         self,
         camera_id: str,
         toilet_gender: str,
+        notification_interval: int,
         face_detector: LFFD,
         gender_recogniser: SSRNet,
         notifier: Notifier,
     ):
         self.id = camera_id
         self.toilet_gender = toilet_gender
+        self.notification_interval = notification_interval
         self.face_detector = face_detector
         self.gender_recogniser = gender_recogniser
         self.notifier = notifier
 
-        self.last_violation_time = time.time()
+        # can notify immediately
+        self.last_violation_time = time.time() - notification_interval
 
     def run(self, args):
         video_capture = cv2.VideoCapture(0)
@@ -64,7 +67,7 @@ class Camera:
                         new_violation_time = time.time()
 
                         # at least 5 seconds interval between each notification
-                        if new_violation_time - self.last_violation_time >= 5:
+                        if new_violation_time - self.last_violation_time >= self.notification_interval:
                             self.last_violation_time = new_violation_time
 
                             self.notifier.notify({
