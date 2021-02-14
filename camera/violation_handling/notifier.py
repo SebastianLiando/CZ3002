@@ -1,9 +1,20 @@
-# import asyncio
 import json
 import os
+import threading
 
 from google.auth.transport.requests import AuthorizedSession
 from google.oauth2 import service_account
+
+
+def notify(
+    authorized_session: AuthorizedSession,
+    url: str,
+    violation_info: dict
+):
+    response = authorized_session.post(url, json=violation_info)
+
+    print(f'status code: {response.status_code}')
+    print(f'response: {response.json()}')
 
 
 class Notifier:
@@ -27,18 +38,15 @@ class Notifier:
             scopes=scopes,
         )
         
-        self.authenticated_session = AuthorizedSession(credentials)
+        self.authorized_session = AuthorizedSession(credentials)
 
         print('instantiated notifier')
 
     def notify(self, violation_info: dict):
-        response = self.authenticated_session.post(
-            self.url,
-            json=violation_info,
-        )
-
-        print(f'status code: {response.status_code}')
-        print(f'response: {response.json()}')
+        threading.Thread(
+            target=notify,
+            args=(self.authorized_session, self.url, violation_info)
+        ).start()
 
 
 if __name__ == '__main__':
