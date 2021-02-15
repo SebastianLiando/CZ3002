@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="com.guavas.cz3002.ui.auth.ProfileFragment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="16dp"
+        android:transitionGroup="true"
+        tools:context=".ui.auth.ProfileFragment">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imageProfilePicture"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:maxWidth="250dp"
+            app:fallbackId="@{@drawable/ic_user}"
+            app:layout_constraintBottom_toTopOf="@id/textEmail"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintWidth_percent="0.3"
+            app:shapeAppearanceOverlay="@style/RoundedImage"
+            app:srcGlideUrl="@{fragment.currentUser.photoUrl}"
+            app:tintInt="@{@android:color/darker_gray}"
+            tools:src="@drawable/ic_user"
+            tools:tint="@android:color/darker_gray" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textEmail"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@{fragment.currentUser.email}"
+            app:layout_constraintBottom_toTopOf="@id/buttonLogout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageProfilePicture"
+            tools:text="security_guard@gmail.com" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:onClick="@{() -> fragment.onClickSignOut()}"
+            android:text="@string/button_logout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textEmail" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

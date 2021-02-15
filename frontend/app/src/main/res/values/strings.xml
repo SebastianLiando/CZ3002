@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">CZ3002</string>
+
+    <string name="label_login">Please Sign In</string>
+
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+
+    <string name="error_empty">This field cannot be empty!</string>
+
+    <string name="label_dialog_log_out_title">Sign Out</string>
+    <string name="label_dialog_log_out_message">Are you sure you want to log out?</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_no">No</string>
+
+    <string name="label_no_task_title">Not Assigned!</string>
+    <string name="label_no_task_body">You have not been assigned a location, please contact your supervisor.</string>
+    <string name="label_no_violation_title">No Violation!</string>
+    <string name="label_no_violation_body">There are no violations for this location</string>
+
+    <string name="button_login">Sign In</string>
+    <string name="button_logout">Sign Out</string>
+    <string name="button_approve">Approve</string>
+    <string name="button_reject">Reject</string>
+
+    <string name="snack_bar_login_failed">Failed to login! Please try again</string>
+
+    <string name="menu_profile">User Profile</string>
+
+    <string name="violation_notification_channel_id">com.guavas.cz3002.Violations</string>
+    <string name="violation_notification_channel_name">Violations</string>
+    <string name="violation_notification_title">New Violation Detected!</string>
+
+    <string name="content_desc_toilet_gender">The toilet gender</string>
+    <string name="content_desc_violation_image">The violation image</string>
+    <string name="content_desc_ic_info">Information icon</string>
+    <string name="content_desc_ic_location">Assigned location icon</string>
+</resources>

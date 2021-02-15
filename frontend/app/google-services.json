@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "131199365201",
+    "project_id": "cz3002-cb7bc",
+    "storage_bucket": "cz3002-cb7bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:131199365201:android:bda6a86b81261d527d0870",
+        "android_client_info": {
+          "package_name": "com.guavas.cz3002"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "131199365201-ee4ud7hro93ok4184blg559hrft80vsm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.guavas.cz3002",
+            "certificate_hash": "72b477499d7721174122117b3ce8aed3c5575978"
+          }
+        },
+        {
+          "client_id": "131199365201-7akg2jnkgk43auppgr4vgero84uks9up.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCqbeL31zineIRbP9rNJ9rE1pRRgTjKwQc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "131199365201-7akg2jnkgk43auppgr4vgero84uks9up.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
