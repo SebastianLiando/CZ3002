@@ -1,13 +1,14 @@
 # CZ3002 frontend
+Reads violation data from the database and get notified immediately of new violations
 
-## how to run
+## Setup
 
-TODO: instructions on how to run the app
+1. Install Android Studio
+2. Open -> Select this folder
+3. Wait until indexing finished
+## How to run
 
-## how to set-up
+1. Connect an Android device to the computer (or use Android emulator)
+2. Click the green play button icon
 
-TODO: instructions on how to set-up repo for coding
 
-## how to deploy
-
-TODO: instructions on how to deploy the web / mobile app
