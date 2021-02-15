@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="com.guavas.cz3002.ui.auth.LoginFragment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionGroup="true"
+        tools:context=".ui.auth.LoginFragment">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/labelLogin"
+            style="@style/TextAppearance.MaterialComponents.Headline5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_login"
+            app:layout_constraintBottom_toTopOf="@id/layoutEmail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutEmail"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="16dp"
+            android:maxWidth="400dp"
+            app:cancelErrorOnEdit="@{true}"
+            app:layout_constraintBottom_toTopOf="@id/layoutPassword"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/labelLogin"
+            app:layout_constraintWidth_percent="0.7"
+            app:startIconDrawable="@drawable/ic_mail">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextEmail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/hint_email"
+                android:inputType="textEmailAddress"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutPassword"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:maxWidth="400dp"
+            app:cancelErrorOnEdit="@{true}"
+            app:endIconMode="password_toggle"
+            app:layout_constraintBottom_toTopOf="@id/buttonLogin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutEmail"
+            app:layout_constraintWidth_percent="0.7"
+            app:startIconDrawable="@drawable/ic_password">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextPassword"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/hint_password"
+                android:inputType="textPassword"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:onClick="@{v -> fragment.onClickSignIn(v)}"
+            android:text="@string/button_login"
+            app:canVisible="@{!fragment.viewModel.isLoading}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutPassword" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textError"
+            style="@style/TextAppearance.MaterialComponents.Body1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@{fragment.viewModel.errorMessage}"
+            android:textAlignment="center"
+            android:textColor="?attr/colorError"
+            app:layout_constraintEnd_toEndOf="@id/layoutEmail"
+            app:layout_constraintStart_toStartOf="@id/layoutEmail"
+            app:layout_constraintTop_toBottomOf="@id/buttonLogin"
+            tools:text="Some error message will be displayed here" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:scaleType="centerCrop"
+            app:isVisible="@{fragment.viewModel.isLoading}"
+            app:layout_constraintBottom_toTopOf="@id/textError"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutPassword"
+            app:lottie_autoPlay="true"
+            app:lottie_colorFilter="?attr/colorPrimary"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/loading_dots" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

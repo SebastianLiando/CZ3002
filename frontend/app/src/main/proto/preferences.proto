@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_package = "com.guavas.cz3002";
+option java_multiple_files = true;
+
+message Preferences {
+
+  // The Firebase Cloud Messaging topic that this device is currently subscribed to.
+  string subscribedTopic = 1;
+}
