@@ -29,9 +29,9 @@ def parse_args():
     )
 
     parser.add_argument(
-        '--use_cpu',
+        '--use_gpu',
         action='store_true',
-        help='whether to use cpu (does not work currently)',
+        help='whether to use gpu',
     )
 
     parser.add_argument(
@@ -46,6 +46,13 @@ def parse_args():
         type=str,
         default='female',
         help='the gender of the toilet being monitored by the camera',
+    )
+
+    parser.add_argument(
+        '--toilet_location',
+        type=str,
+        default='hall 15 level 3 toilet A',
+        help='location of the toilet being monitored by the camera',
     )
 
     parser.add_argument(
@@ -90,7 +97,7 @@ def main(args):
     '''
     The main program
     '''   
-    context = mx.cpu() if args.use_cpu else mx.gpu()
+    context = mx.gpu(0) if args.use_gpu else mx.cpu()
     print(f'using {context.device_type}\n')
     
     face_detector = LFFD(
@@ -110,6 +117,7 @@ def main(args):
     camera = Camera(
         args.camera_id,
         args.toilet_gender,
+        args.toilet_location,
         args.notification_interval,
         face_detector,
         gender_recogniser,
