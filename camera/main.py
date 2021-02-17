@@ -94,7 +94,6 @@ def main(args):
     context = mx.cpu()
     
     face_detector = LFFD(
-        context=context,
         symbol_file_path=args.lffd_symbol_file_path,
         model_file_path=args.lffd_model_file_path,
     )
