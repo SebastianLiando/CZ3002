@@ -7,6 +7,7 @@ import threading
 from base64 import b64encode
 from firebase_admin import credentials
 from firebase_admin import db
+from firebase_admin import messaging
 from firebase_admin import storage
 from uuid import uuid4
 
@@ -17,14 +18,31 @@ def notify(
     violation_info: dict,
     image: np.ndarray,
 ):
-    image_id = str(uuid4())
-    encoded_image = b64encode(image)
+    try:
+        image_id = str(uuid4())
+        encoded_image = b64encode(image)
 
-    blob = storage_bucket.blob(image_id)
-    blob.upload_from_string(encoded_image, content_type='image/png')
+        blob = storage_bucket.blob(image_id)
+        blob.upload_from_string(encoded_image, content_type='image/png')
 
-    violation_info['imageId'] = image_id
-    database_reference.push(violation_info)
+        violation_info['imageId'] = image_id
+        database_reference.push(violation_info)
+
+        location = violation_info['location']
+        message = messaging.Message(
+            data={'imageId': image_id},
+            notification=messaging.Notification(
+                title='violation detected',
+                body=f'location: {location}'
+            ),
+            topic=location,
+        )
+
+        response = messaging.send(message)
+        print(f'successfully send notification: {response}')
+    
+    except Exception as error:
+        print(error)
 
 
 class Notifier:

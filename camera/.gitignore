@@ -1,6 +1,6 @@
 # sensitive info
 config.json
-key.json
+*key.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

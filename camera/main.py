@@ -45,7 +45,7 @@ def parse_args():
     parser.add_argument(
         '--toilet_location',
         type=str,
-        default='hall 15 level 3 toilet A',
+        default='N3-01-01',
         help='location of the toilet being monitored by the camera',
     )
 
