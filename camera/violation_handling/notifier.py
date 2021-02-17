@@ -1,16 +1,29 @@
 import firebase_admin
 import json
+import numpy as np
 import os
 import threading
 
+from base64 import b64encode
 from firebase_admin import credentials
 from firebase_admin import db
+from firebase_admin import storage
+from uuid import uuid4
 
 
 def notify(
     database_reference: db.Reference,
+    storage_bucket,
     violation_info: dict,
+    image: np.ndarray,
 ):
+    image_id = str(uuid4())
+    encoded_image = b64encode(image)
+
+    blob = storage_bucket.blob(image_id)
+    blob.upload_from_string(encoded_image, content_type='image/png')
+
+    violation_info['imageId'] = image_id
     database_reference.push(violation_info)
 
 
@@ -23,37 +36,29 @@ class Notifier:
         with open(config_file_path) as config_file:
             config = json.load(config_file)
 
-        project_id = config['project_id']
-        database_url = f'https://{project_id}.firebaseio.com/violations.json'
-
         key_file_path = os.path.join(dir_path, 'key.json')
         credential = credentials.Certificate(key_file_path)
 
         firebase_admin.initialize_app(
             credential=credential,
             options={
-                'databaseURL': database_url,
-            }
+                'databaseURL': config['databaseURL'],
+                'storageBucket': config['storageBucket'],
+            },
         )
 
         self.database_reference = db.reference('violations')
+        self.storage_bucket = storage.bucket()
 
         print('instantiated notifier')
 
-    def notify(self, violation_info: dict):
+    def notify(self, violation_info: dict, image: np.ndarray):
         threading.Thread(
             target=notify,
-            args=(self.database_reference, violation_info)
+            args=(
+                self.database_reference,
+                self.storage_bucket,
+                violation_info,
+                image,
+            ),
         ).start()
-
-
-if __name__ == '__main__':
-    from datetime import datetime
-
-    notifier = Notifier()
-    notifier.notify({
-        'camera_id': '0',
-        'toilet_gender': 'female',
-        'person_gender': 'male',
-        'date_time': str(datetime.now()),
-    })

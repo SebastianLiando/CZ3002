@@ -37,9 +37,9 @@ def parse_args():
 
     parser.add_argument(
         '--toilet_gender',
-        type=str,
-        default='female',
-        help='the gender of the toilet being monitored by the camera',
+        type=int,
+        default='0',
+        help='the gender of the toilet being monitored by the camera (0 for female, 1 for male)',
     )
 
     parser.add_argument(
@@ -106,7 +106,6 @@ def main(args):
     notifier = Notifier()
 
     camera = Camera(
-        args.camera_id,
         args.toilet_gender,
         args.toilet_location,
         args.notification_interval,

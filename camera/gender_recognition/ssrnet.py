@@ -51,13 +51,12 @@ class SSRNet:
         print('loaded SSR-Net successfully\n')
         return module
     
-    def predict(self, image: np.ndarray) -> (str, float):
+    def predict(self, image: np.ndarray) -> (int, float):
         '''
         Forward pass / inference
 
-        :param image: (np.ndarray) input image
-
-        :return: (str) 'male' or 'female'
+        :param image: (np.ndarray) input image  
+        :return: (int) 1 (male) or 0 (female)  
         '''
         image = cv2.resize(image, (self.input_height, self.input_width))
 
@@ -76,6 +75,6 @@ class SSRNet:
         self.model.forward(data_batch, is_train=False)
 
         gender_score = float(self.model.get_outputs()[0].asnumpy()[0])
-        gender = 'male' if gender_score > 0.5 else 'female'
+        gender = 1 if gender_score > 0.5 else 0
 
         return gender, gender_score
