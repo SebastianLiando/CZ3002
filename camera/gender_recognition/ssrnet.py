@@ -9,28 +9,25 @@ import numpy as np
 class SSRNet:
     '''
     Soft Stagewise Regression Network
+
+    :param input_height: (int) input height of the model  
+    :param input_width: (int) input width of the model  
     '''
     def __init__(
         self,
-        context: mx.Context,
         prefix: str,
         epoch: int,
         input_height: int = 64,
         input_width: int = 64
     ):
-        '''
-        :param context: (mx.Context) MXNet's GPU / CPU context
+        self.context = mx.cpu()
 
-        :param input_height: (int) input height of the model
-
-        :param input_width: (int) input width of the model
-        '''
         self.input_height = input_height
         self.input_width = input_width
 
-        self.model = self.__load_model(context, prefix, epoch)
+        self.model = self.__load_model(prefix, epoch)
 
-    def __load_model(self, context: mx.Context, prefix: str, epoch: int):
+    def __load_model(self, prefix: str, epoch: int):
         print('loading SSR-Net...')
         symbol, arg_params, aux_params = mx.model.load_checkpoint(prefix, epoch)
 
@@ -39,7 +36,7 @@ class SSRNet:
 
         module = mx.mod.Module(
             symbol=symbol,
-            data_names=('data', 'stage_num0', 'stage_num1', 'stage_num2'),context=context,
+            data_names=('data', 'stage_num0', 'stage_num1', 'stage_num2'),context=self.context,
             label_names = None,
         )
 

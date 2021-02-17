@@ -29,12 +29,6 @@ def parse_args():
     )
 
     parser.add_argument(
-        '--use_gpu',
-        action='store_true',
-        help='whether to use gpu',
-    )
-
-    parser.add_argument(
         '--camera_id',
         type=str,
         default='0',
@@ -97,8 +91,7 @@ def main(args):
     '''
     The main program
     '''   
-    context = mx.gpu(0) if args.use_gpu else mx.cpu()
-    print(f'using {context.device_type}\n')
+    context = mx.cpu()
     
     face_detector = LFFD(
         context=context,
@@ -107,7 +100,6 @@ def main(args):
     )
 
     gender_recogniser = SSRNet(
-        context=context,
         prefix=args.ssrnet_prefix,
         epoch=args.ssrnet_epoch_num,
     )
