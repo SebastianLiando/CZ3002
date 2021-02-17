@@ -80,23 +80,18 @@ def perform_NMS(boxes, overlap_threshold):
 class LFFD:
     '''
     Light and Fast Face Detector
+
+    :param input_height: (int) input height of the model  
+    :param input_width: (int) input width of the model  
     '''
     def __init__(
         self,
-        context: mx.Context,
         symbol_file_path: str,
         model_file_path: str,
         input_height: int = 480,
         input_width: int = 640,
     ):
-        '''
-        :param context: (mx.Context) MXNet's GPU / CPU context
-
-        :param input_height: (int) input height of the model
-
-        :param input_width: (int) input width of the model
-        '''
-        self.context = context
+        self.context = mx.cpu()
 
         self.receptive_field_list = config.param_receptive_field_list
         self.receptive_field_stride = config.param_receptive_field_stride

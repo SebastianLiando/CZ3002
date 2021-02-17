@@ -29,12 +29,6 @@ def parse_args():
     )
 
     parser.add_argument(
-        '--use_cpu',
-        action='store_true',
-        help='whether to use cpu (does not work currently)',
-    )
-
-    parser.add_argument(
         '--camera_id',
         type=str,
         default='0',
@@ -43,9 +37,16 @@ def parse_args():
 
     parser.add_argument(
         '--toilet_gender',
+        type=int,
+        default='0',
+        help='the gender of the toilet being monitored by the camera (0 for female, 1 for male)',
+    )
+
+    parser.add_argument(
+        '--toilet_location',
         type=str,
-        default='female',
-        help='the gender of the toilet being monitored by the camera',
+        default='N3-01-01',
+        help='location of the toilet being monitored by the camera',
     )
 
     parser.add_argument(
@@ -90,17 +91,14 @@ def main(args):
     '''
     The main program
     '''   
-    context = mx.cpu() if args.use_cpu else mx.gpu()
-    print(f'using {context.device_type}\n')
+    context = mx.cpu()
     
     face_detector = LFFD(
-        context=context,
         symbol_file_path=args.lffd_symbol_file_path,
         model_file_path=args.lffd_model_file_path,
     )
 
     gender_recogniser = SSRNet(
-        context=context,
         prefix=args.ssrnet_prefix,
         epoch=args.ssrnet_epoch_num,
     )
@@ -108,8 +106,8 @@ def main(args):
     notifier = Notifier()
 
     camera = Camera(
-        args.camera_id,
         args.toilet_gender,
+        args.toilet_location,
         args.notification_interval,
         face_detector,
         gender_recogniser,
