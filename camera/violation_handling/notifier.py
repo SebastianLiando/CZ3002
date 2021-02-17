@@ -1,24 +1,22 @@
+import firebase_admin
 import json
 import os
 import threading
 
-from google.auth.transport.requests import AuthorizedSession
-from google.oauth2 import service_account
+from firebase_admin import credentials
+from firebase_admin import db
 
 
 def notify(
-    authorized_session: AuthorizedSession,
-    url: str,
-    violation_info: dict
+    database_reference: db.Reference,
+    violation_info: dict,
 ):
-    response = authorized_session.post(url, json=violation_info)
-
-    print(f'status code: {response.status_code}')
-    print(f'response: {response.json()}')
+    database_reference.push(violation_info)
 
 
 class Notifier:
     def __init__(self):
+        # config and key should be placed in same directory
         dir_path = os.path.dirname(__file__)
 
         config_file_path = os.path.join(dir_path, 'config.json')
@@ -26,26 +24,26 @@ class Notifier:
             config = json.load(config_file)
 
         project_id = config['project_id']
-        self.url = f'https://{project_id}.firebaseio.com/violations.json'
+        database_url = f'https://{project_id}.firebaseio.com/violations.json'
 
         key_file_path = os.path.join(dir_path, 'key.json')
-        scopes = [
-            'https://www.googleapis.com/auth/userinfo.email',
-            'https://www.googleapis.com/auth/firebase.database',
-        ]
-        credentials = service_account.Credentials.from_service_account_file(
-            key_file_path,
-            scopes=scopes,
+        credential = credentials.Certificate(key_file_path)
+
+        firebase_admin.initialize_app(
+            credential=credential,
+            options={
+                'databaseURL': database_url,
+            }
         )
-        
-        self.authorized_session = AuthorizedSession(credentials)
+
+        self.database_reference = db.reference('violations')
 
         print('instantiated notifier')
 
     def notify(self, violation_info: dict):
         threading.Thread(
             target=notify,
-            args=(self.authorized_session, self.url, violation_info)
+            args=(self.database_reference, violation_info)
         ).start()
 
 
