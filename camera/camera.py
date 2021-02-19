@@ -1,19 +1,30 @@
 import cv2
 import time
 
-from face_detection.lffd import LFFD
-from gender_recognition.ssrnet import SSRNet
-from violation_handling.notifier import Notifier
+from face_detection import FaceDetector
+from gender_classification import GenderClassifier
+from violation_handling import Notifier
 
 
 class Camera:
+    '''
+    Simulated camera.
+    Able to perform face detection and gender classification.
+
+    :param toilet_gender: (int) toilet gender [1 for male, 0 for female]  
+    :param toilet_location: (str) where the toilet is; no spaces allowed  
+    :param notification_interval: (int) time in seconds between each notification  
+    :param face_detector: (FaceDetector) face detection model  
+    :param gender_classifier: (GenderClassifier) gender classification model  
+    :param notifier: (Notifier) TODO  
+    '''
     def __init__(
         self,
         toilet_gender: int,
         toilet_location: str,
         notification_interval: int,
-        face_detector: LFFD,
-        gender_recogniser: SSRNet,
+        face_detector: FaceDetector,
+        gender_classifier: GenderClassifier,
         notifier: Notifier,
     ):
         self.gender_map = {1: 'male', 0: 'female'}
@@ -22,13 +33,13 @@ class Camera:
         self.toilet_location = toilet_location
         self.notification_interval = notification_interval
         self.face_detector = face_detector
-        self.gender_recogniser = gender_recogniser
+        self.gender_classifier = gender_classifier
         self.notifier = notifier
 
         # can notify immediately
         self.last_violation_time = time.time() - notification_interval
 
-    def run(self, args):
+    def run(self, debug: bool = False):
         video_capture = cv2.VideoCapture(0)  # use web cam
 
         if not video_capture.isOpened():
@@ -73,7 +84,7 @@ class Camera:
                     )
 
                     face = frame[bbox[1]: bbox[3], bbox[0]: bbox[2]]
-                    gender, gender_score = self.gender_recogniser.predict(face)
+                    gender, gender_score = self.gender_classifier.predict(face)
 
                     if gender != self.toilet_gender:
                         new_violation_time = time.time()
@@ -99,7 +110,7 @@ class Camera:
                                 image=frame,
                             )
 
-                    if args.debug:
+                    if debug:
                         frame = cv2.rectangle(
                             frame,
                             (bbox[0], bbox[1]),  # top-left point
@@ -118,7 +129,7 @@ class Camera:
                             thickness=2,
                         )
                 
-                if args.debug:
+                if debug:
                     cv2.imshow('camera', frame)
 
                 if cv2.waitKey(1) == ord('q'):  # press q to stop

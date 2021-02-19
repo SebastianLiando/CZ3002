@@ -8,79 +8,32 @@ import numpy as np
 from . import config
 
 
+class FaceDetector:
+    '''
+    Interface for face detection model.
+
+    Must implement the predict() method.  
+    predict() must accept an image (np.ndarray) as argument.
+    '''
+    def __init__(self):
+        raise NotImplementedError('NotImplementedError: attempted usage of abstract face detector')
+
+    def predict(self, image: np.ndarray):
+        raise NotImplementedError('NotImplementedError: attempted usage of abstract face detector')
+
+
 # empty data batch class for dynamical properties
 class DataBatch:
     pass
 
 
-def perform_NMS(boxes, overlap_threshold):
+class LFFD(FaceDetector):
     '''
-    Non-Maximum Suppression
-    
-    :param boxes: numpy nx5, n is the number of boxes, 0:4->x1, y1, x2, y2, 4->score
-    :param overlap_threshold:
-    :return:
-    '''
-    if boxes.shape[0] == 0:
-        return boxes
+    Light and Fast Face Detector  
+    super class: FaceDetector
 
-    # if the bounding boxes integers, convert them to floats --
-    # this is important since we'll be doing a bunch of divisions
-    if boxes.dtype != np.float32:
-        boxes = boxes.astype(np.float32)
-
-    # initialize the list of picked indices
-    pick = []
-    # grab the coordinates of the bounding boxes
-    x1 = boxes[:, 0]
-    y1 = boxes[:, 1]
-    x2 = boxes[:, 2]
-    y2 = boxes[:, 3]
-    sc = boxes[:, 4]
-    widths = x2 - x1
-    heights = y2 - y1
-
-    # compute the area of the bounding boxes and sort the bounding
-    # boxes by the bottom-right y-coordinate of the bounding box
-    area = heights * widths
-    indices = np.argsort(sc)  # 从小到大排序
-
-    # keep looping while some indices still remain in the indices list
-    while len(indices) > 0:
-        # grab the last index in the indices list and add the
-        # index value to the list of picked indices
-        last = len(indices) - 1
-        index = indices[-1]
-        pick.append(index)
-
-        # compare secend highest score boxes
-        xx1 = np.maximum(x1[index], x1[indices[:last]])
-        yy1 = np.maximum(y1[index], y1[indices[:last]])
-        xx2 = np.minimum(x2[index], x2[indices[:last]])
-        yy2 = np.minimum(y2[index], y2[indices[:last]])
-
-        # compute the width and height of the bounding box
-        w = np.maximum(0, xx2 - xx1 + 1)
-        h = np.maximum(0, yy2 - yy1 + 1)
-
-        # compute the ratio of overlap
-        overlap = (w * h) / area[indices[:last]]
-
-        # delete all indices from the index list that have
-        indices = np.delete(
-            indices,
-            np.concatenate(([last], np.where(overlap > overlap_threshold)[0])),
-        )
-
-    # return only the bounding boxes that were picked using the
-    # integer data type
-    return boxes[pick]
-
-
-class LFFD:
-    '''
-    Light and Fast Face Detector
-
+    :param symbol_file_path: (str) path to model's symbol file  
+    :param model_file_path: (str) path to file containing model's parameters  
     :param input_height: (int) input height of the model  
     :param input_width: (int) input width of the model  
     '''
@@ -153,22 +106,86 @@ class LFFD:
         print('loaded LFFD successfully\n')
         return module
 
+    def __perform_nms(self, boxes, overlap_threshold):
+        '''
+        Non-Maximum Suppression
+        '''
+        if boxes.shape[0] == 0:
+            return boxes
+
+        # if the bounding boxes integers, convert them to floats --
+        # this is important since we'll be doing a bunch of divisions
+        if boxes.dtype != np.float32:
+            boxes = boxes.astype(np.float32)
+
+        # initialize the list of picked indices
+        pick = []
+        # grab the coordinates of the bounding boxes
+        x1 = boxes[:, 0]
+        y1 = boxes[:, 1]
+        x2 = boxes[:, 2]
+        y2 = boxes[:, 3]
+        sc = boxes[:, 4]
+        widths = x2 - x1
+        heights = y2 - y1
+
+        # compute the area of the bounding boxes and sort the bounding
+        # boxes by the bottom-right y-coordinate of the bounding box
+        area = heights * widths
+        indices = np.argsort(sc)  # 从小到大排序
+
+        # keep looping while some indices still remain in the indices list
+        while len(indices) > 0:
+            # grab the last index in the indices list and add the
+            # index value to the list of picked indices
+            last = len(indices) - 1
+            index = indices[-1]
+            pick.append(index)
+
+            # compare secend highest score boxes
+            xx1 = np.maximum(x1[index], x1[indices[:last]])
+            yy1 = np.maximum(y1[index], y1[indices[:last]])
+            xx2 = np.minimum(x2[index], x2[indices[:last]])
+            yy2 = np.minimum(y2[index], y2[indices[:last]])
+
+            # compute the width and height of the bounding box
+            w = np.maximum(0, xx2 - xx1 + 1)
+            h = np.maximum(0, yy2 - yy1 + 1)
+
+            # compute the ratio of overlap
+            overlap = (w * h) / area[indices[:last]]
+
+            # delete all indices from the index list that have
+            indices = np.delete(
+                indices,
+                np.concatenate(([last], np.where(overlap > overlap_threshold)[0])),
+            )
+
+        # return only the bounding boxes that were picked using the
+        # integer data type
+        return boxes[pick]
+
     def predict(
         self,
         image: np.ndarray,
         resize_scale: float = 1,
         score_threshold: float = 0.8,
         top_k: int = 100,
-        NMS_threshold: float = 0.3,
-        NMS_flag: bool = True,
+        nms_threshold: float = 0.3,
+        nms_flag: bool = True,
         skip_scale_branch_list: list = [],
-    ):
+    ) -> list:
         '''
         Forward pass / inference
 
-        :param image: (np.ndarray) input image
-
-        :return: (tuple of floats) top_left_x, top_left_y, bottom_right_x, bottom_right_y, confidence
+        :param image: (np.ndarray) input image  
+        :param resize_scale: (float) TODO [default: 1]  
+        :param score_threshold: (float) TODO [default: 0.8]  
+        :param top_k: (int) TODO [default: 100]  
+        :param nms_threshold: (float) TODO [default: 0.3]  
+        :param nms_flag: (bool) whether to perform non-maximum suppression [default: True]  
+        :param skip_scale_branch_list: (list) TODO [default: empty list]  
+        :return: (list) a list of tuples, each tuple having the following float values [top_left_x, top_left_y, bottom_right_x, bottom_right_y, confidence]
         '''
         if image.ndim != 3 or image.shape[2] != 3:
             print('Only RGB images are supported.')
@@ -237,7 +254,7 @@ class LFFD:
                     score_map[select_index[0][idx], select_index[1][idx]]
                 ))
 
-        # NMS
+        # for NMS
         bbox_collection = sorted(
             bbox_collection,
             key=lambda item: item[-1],
@@ -247,8 +264,8 @@ class LFFD:
             bbox_collection = bbox_collection[0:top_k]
         bbox_collection_numpy = np.array(bbox_collection, dtype=np.float32)
 
-        if NMS_flag:
-            final_bboxes = perform_NMS(bbox_collection_numpy, NMS_threshold)
+        if nms_flag:
+            final_bboxes = self.__perform_nms(bbox_collection_numpy, nms_threshold)
             final_bboxes_ = []
             for i in range(final_bboxes.shape[0]):
                 final_bboxes_.append((final_bboxes[i, 0], final_bboxes[i, 1], final_bboxes[i, 2], final_bboxes[i, 3], final_bboxes[i, 4]))

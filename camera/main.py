@@ -8,9 +8,9 @@ import numpy as np
 import os
 
 from camera import Camera
-from face_detection.lffd import LFFD
-from gender_recognition.ssrnet import SSRNet
-from violation_handling.notifier import Notifier
+from face_detection import LFFD
+from gender_classification import SSRNet
+from violation_handling import Notifier
 
 
 def parse_args():
@@ -98,7 +98,7 @@ def main(args):
         model_file_path=args.lffd_model_file_path,
     )
 
-    gender_recogniser = SSRNet(
+    gender_classifier = SSRNet(
         prefix=args.ssrnet_prefix,
         epoch=args.ssrnet_epoch_num,
     )
@@ -110,10 +110,10 @@ def main(args):
         args.toilet_location,
         args.notification_interval,
         face_detector,
-        gender_recogniser,
+        gender_classifier,
         notifier,
     )
-    camera.run(args)
+    camera.run(debug=args.debug)
 
 
 if __name__ == '__main__':

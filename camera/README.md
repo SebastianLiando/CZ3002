@@ -1,6 +1,6 @@
 # CZ3002 camera
 
-Performs face detection and gender recognition on a "surveillance camera".
+Performs face detection and gender classification on a "surveillance camera".
 Use a computer's webcam as the surveillance camera.
 
 ## requirements
@@ -28,5 +28,6 @@ Use a computer's webcam as the surveillance camera.
 
 ## TODO
 
-- send image to server
-- fix LFFD not working on CPU
+- write unit tests
+- refactor code
+- update documentation
