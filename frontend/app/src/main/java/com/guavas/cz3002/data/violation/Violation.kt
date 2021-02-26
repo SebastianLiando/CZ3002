@@ -2,6 +2,7 @@ package com.guavas.cz3002.data.violation
 
 import android.text.format.DateUtils
 import androidx.lifecycle.asLiveData
+import com.google.firebase.database.Exclude
 import com.guavas.cz3002.utils.Gender
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -21,7 +22,7 @@ import java.util.*
  * @property timestamp The time the violation happened in milliseconds since epoch.
  */
 data class Violation(
-    var id: String = "",
+    @get:Exclude var id: String = "",
     var location: String = "",
     @get:JvmName("getIsTrue") var isTrue: Boolean = false,
     var verifiedBy: String? = null,

@@ -80,6 +80,12 @@ class ViolationsFragment : GuardedFragment<FragmentViolationsBinding>() {
                 Timber.d("Navigating to details of violation ${it.id}")
             }, onVerifyViolation = { violation, isTrue ->
                 Timber.d("Violation $violation $isTrue")
+                viewModel.verifyViolation(
+                    violation = violation,
+                    isTrue = isTrue,
+                    uid = mainViewModel.currentUser.value?.uid
+                        ?: throw IllegalStateException("Unable to verify without logging in!")
+                )
             }, onLoadImage = viewModel::loadImage
         )
 

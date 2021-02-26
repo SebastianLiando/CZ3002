@@ -12,13 +12,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
 class ViolationRepository @Inject constructor(
     private val database: FirebaseDatabase,
     private val storage: FirebaseStorage
 ) {
+    private val violationRef by lazy { database.reference.child(VIOLATION_PATH) }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getViolations(location: String) = callbackFlow<List<Violation>> {
         val listener = object : ValueEventListener {
@@ -37,8 +41,7 @@ class ViolationRepository @Inject constructor(
             }
         }
 
-        val dataPath = database.reference.child(VIOLATION_PATH)
-            .orderByChild(LOCATION_KEY)
+        val dataPath = violationRef.orderByChild(LOCATION_KEY)
 
         dataPath.keepSynced(true)
 
@@ -61,6 +64,22 @@ class ViolationRepository @Inject constructor(
             .error(android.R.color.darker_gray)
             .into(view)
     }
+
+    /**
+     * Verifies a violation.
+     *
+     * @param violation The violation to be verified.
+     * @param isTrue `true` if it is not a false positive.
+     * @param uid The user id that verifies.
+     */
+    suspend fun verifyViolation(violation: Violation, isTrue: Boolean, uid: String) =
+        suspendCancellableCoroutine<Boolean> { cont ->
+            violationRef.child(violation.id)
+                .setValue(violation.copy(verifiedBy = uid, isTrue = isTrue))
+                .addOnCompleteListener { task ->
+                    cont.resume(task.isSuccessful)
+                }
+        }
 
     companion object {
         const val VIOLATION_PATH = "violations"

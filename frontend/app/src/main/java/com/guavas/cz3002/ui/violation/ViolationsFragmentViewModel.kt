@@ -3,11 +3,13 @@ package com.guavas.cz3002.ui.violation
 import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.guavas.cz3002.data.violation.Violation
 import com.guavas.cz3002.data.violation.ViolationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -63,5 +65,11 @@ class ViolationsFragmentViewModel @Inject constructor(
 
     fun loadImage(violation: Violation, image: ImageView) {
         violationRepo.loadViolationImage(view = image, violation = violation)
+    }
+
+    fun verifyViolation(violation: Violation, isTrue: Boolean, uid: String) {
+        viewModelScope.launch {
+            violationRepo.verifyViolation(violation, isTrue, uid)
+        }
     }
 }
