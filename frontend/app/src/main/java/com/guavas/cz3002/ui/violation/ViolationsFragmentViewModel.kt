@@ -7,10 +7,7 @@ import com.guavas.cz3002.data.violation.Violation
 import com.guavas.cz3002.data.violation.ViolationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +24,7 @@ class ViolationsFragmentViewModel @Inject constructor(
         _isLoading.value = loading
     }
 
-    private val _assignedLocation: MutableStateFlow<String> = MutableStateFlow("")
+    private val _assignedLocation = MutableStateFlow("")
     val assignedLocation = _assignedLocation.asLiveData()
 
     /** Returns `true` if the security guard is assigned a location*/
@@ -37,19 +34,32 @@ class ViolationsFragmentViewModel @Inject constructor(
         _assignedLocation.value = location
     }
 
-    /** Contains violations of the assigned location. Violation is null means that the security guard
-     * is not assigned to any location. Empty list means that there is no violation. */
-    val violations = _assignedLocation.flatMapLatest { location ->
+    private val _showFalsePositive = MutableStateFlow(false)
+
+    fun setShowFalsePositive(show: Boolean) {
+        _showFalsePositive.value = show
+    }
+
+    private val allViolations = _assignedLocation.flatMapLatest { location ->
         if (location.isBlank()) {
             flowOf(null)
         } else {
             violationRepo.getViolations(location)
-                .map { list ->
-                    list.sortedByDescending { it.timestamp }
-                        .sortedBy { it.isVerified }
-                }
         }
     }
+
+    /** Contains violations of the assigned location. Violation is null means that the security guard
+     * is not assigned to any location. Empty list means that there is no violation. */
+    val violations =
+        allViolations.combine(_showFalsePositive) { listViolations, withFalsePositive ->
+            if (withFalsePositive) {
+                listViolations
+            } else {
+                listViolations?.filter { !it.isFalsePositive }
+            }?.sortedByDescending { it.timestamp }
+                ?.sortedBy { it.isVerified }
+
+        }
 
     fun loadImage(violation: Violation, image: ImageView) {
         violationRepo.loadViolationImage(view = image, violation = violation)

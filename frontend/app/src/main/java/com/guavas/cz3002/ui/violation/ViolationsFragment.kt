@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.children
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -99,7 +98,7 @@ class ViolationsFragment : GuardedFragment<FragmentViolationsBinding>() {
         binding.root.doOnGlobalLayout { root ->
             val recyclerView = binding.recyclerViewViolations
             val parentWidth = root.width
-            val itemWidth = recyclerView.children.firstOrNull()?.width ?: parentWidth
+            val itemWidth = 1000 //recyclerView.children.firstOrNull()?.width ?: parentWidth
             Timber.d("Parent width: $parentWidth")
             Timber.d("Recycler item width: $itemWidth")
 

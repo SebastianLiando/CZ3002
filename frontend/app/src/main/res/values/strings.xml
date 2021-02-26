@@ -22,6 +22,7 @@
     <string name="button_logout">Sign Out</string>
     <string name="button_approve">Approve</string>
     <string name="button_reject">Reject</string>
+    <string name="button_show_rejected">Show False Positive</string>
 
     <string name="snack_bar_login_failed">Failed to login! Please try again</string>
 

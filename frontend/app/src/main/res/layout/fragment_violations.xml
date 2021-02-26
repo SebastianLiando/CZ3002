@@ -78,7 +78,7 @@
         <androidx.constraintlayout.widget.Group
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:constraint_referenced_ids="imageLocation,textLocation,recyclerViewViolations"
+            app:constraint_referenced_ids="imageLocation,textLocation,recyclerViewViolations,switchFalsePositive"
             app:isVisible="@{fragment.viewModel.isAssignedLocation &amp;&amp; !fragment.viewModel.isLoading}" />
 
         <ImageView
@@ -107,14 +107,24 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewViolations"
             android:layout_width="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_height="0dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="16dp"
             android:scrollbars="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imageLocation" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchFalsePositive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_show_rejected"
+            app:layout_constraintBottom_toBottomOf="@id/imageLocation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/imageLocation"
+            app:onCheckedChangeListener="@{(v, c) -> fragment.viewModel.setShowFalsePositive(c)}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
