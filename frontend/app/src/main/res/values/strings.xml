@@ -18,6 +18,11 @@
     <string name="label_no_violation_title">No Violation!</string>
     <string name="label_no_violation_body">There are no violations for this location</string>
 
+    <string name="label_person_gender">Detected Gender</string>
+    <string name="label_toilet_gender">Toilet Gender</string>
+    <string name="label_false_positive">This violation is a false positive!</string>
+    <string name="label_true_violation">This violation is a real violation!</string>
+
     <string name="button_login">Sign In</string>
     <string name="button_logout">Sign Out</string>
     <string name="button_approve">Approve</string>
@@ -36,4 +41,8 @@
     <string name="content_desc_violation_image">The violation image</string>
     <string name="content_desc_ic_info">Information icon</string>
     <string name="content_desc_ic_location">Assigned location icon</string>
+    <string name="content_desc_person_gender">The person gender</string>
+
+    <string name="transition_name_details">violation_details</string>
+    <string name="transition_name_items">violation_item_%1$s</string>
 </resources>

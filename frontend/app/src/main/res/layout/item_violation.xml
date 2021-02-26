@@ -10,6 +10,10 @@
         <variable
             name="violation"
             type="com.guavas.cz3002.data.violation.Violation" />
+
+        <variable
+            name="time"
+            type="String" />
     </data>
 
     <LinearLayout
@@ -19,9 +23,11 @@
         android:layout_margin="8dp">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:elevation="4dp"
+            android:transitionName="@{@string/transition_name_items(violation.id)}"
             app:cardCornerRadius="8dp">
 
             <LinearLayout
@@ -69,7 +75,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@{violation.elapsedTime}"
+                    android:text="@{time}"
                     android:textAlignment="center"
                     tools:text="47 minutes ago" />
 
