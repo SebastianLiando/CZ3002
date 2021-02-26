@@ -110,6 +110,7 @@ dependencies {
 
     // Firebase Storage
     implementation "com.google.firebase:firebase-storage-ktx"
+    implementation 'com.firebaseui:firebase-ui-storage:7.1.1'
 
 }
 

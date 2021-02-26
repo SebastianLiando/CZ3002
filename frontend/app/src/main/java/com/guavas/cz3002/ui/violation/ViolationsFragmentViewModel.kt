@@ -1,7 +1,9 @@
 package com.guavas.cz3002.ui.violation
 
+import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import com.guavas.cz3002.data.violation.Violation
 import com.guavas.cz3002.data.violation.ViolationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,11 +39,19 @@ class ViolationsFragmentViewModel @Inject constructor(
 
     /** Contains violations of the assigned location. Violation is null means that the security guard
      * is not assigned to any location. Empty list means that there is no violation. */
-    val violations = _assignedLocation.flatMapLatest {
-        if (it.isBlank()) {
+    val violations = _assignedLocation.flatMapLatest { location ->
+        if (location.isBlank()) {
             flowOf(null)
         } else {
-            violationRepo.getViolations(it)
+            violationRepo.getViolations(location)
+                .map { list ->
+                    list.sortedByDescending { it.timestamp }
+                        .sortedBy { it.isVerified }
+                }
         }
+    }
+
+    fun loadImage(violation: Violation, image: ImageView) {
+        violationRepo.loadViolationImage(view = image, violation = violation)
     }
 }

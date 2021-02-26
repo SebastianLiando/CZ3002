@@ -5,14 +5,17 @@ import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.children
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.transition.MaterialFadeThrough
 import com.google.android.material.transition.MaterialSharedAxis
 import com.guavas.cz3002.R
 import com.guavas.cz3002.databinding.FragmentViolationsBinding
 import com.guavas.cz3002.extension.android.createNotificationChannel
+import com.guavas.cz3002.extension.android.doOnGlobalLayout
 import com.guavas.cz3002.ui.activity.MainActivityViewModel
 import com.guavas.cz3002.ui.adapter.ViolationAdapter
 import com.guavas.cz3002.ui.base.GuardedFragment
@@ -78,9 +81,8 @@ class ViolationsFragment : GuardedFragment<FragmentViolationsBinding>() {
                 Timber.d("Navigating to details of violation ${it.id}")
             }, onVerifyViolation = { violation, isTrue ->
                 Timber.d("Violation $violation $isTrue")
-            })
-
-        binding.recyclerViewViolations.adapter = violationAdapter
+            }, onLoadImage = viewModel::loadImage
+        )
 
         lifecycleScope.launch {
             viewModel.violations.collect {
@@ -92,6 +94,21 @@ class ViolationsFragment : GuardedFragment<FragmentViolationsBinding>() {
                     violationAdapter.submitList(violations)
                 }
             }
+        }
+
+        binding.root.doOnGlobalLayout { root ->
+            val recyclerView = binding.recyclerViewViolations
+            val parentWidth = root.width
+            val itemWidth = recyclerView.children.firstOrNull()?.width ?: parentWidth
+            Timber.d("Parent width: $parentWidth")
+            Timber.d("Recycler item width: $itemWidth")
+
+            val spanCount = parentWidth / itemWidth
+
+            Timber.d("Suitable span count: $spanCount")
+
+            recyclerView.layoutManager = GridLayoutManager(requireContext(), spanCount)
+            recyclerView.adapter = violationAdapter
         }
     }
 

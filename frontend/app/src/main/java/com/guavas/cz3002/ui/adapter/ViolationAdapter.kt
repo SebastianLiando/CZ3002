@@ -1,5 +1,6 @@
 package com.guavas.cz3002.ui.adapter
 
+import android.widget.ImageView
 import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import com.guavas.cz3002.R
@@ -16,7 +17,8 @@ private val callback = object : DiffUtil.ItemCallback<Violation>() {
 class ViolationAdapter(
     private val owner: LifecycleOwner,
     private val onClickViolation: (Violation) -> Unit,
-    private val onVerifyViolation: (Violation, Boolean) -> Unit
+    private val onVerifyViolation: (Violation, Boolean) -> Unit,
+    private val onLoadImage: (Violation, ImageView) -> Unit,
 ) : BindingListAdapter<ItemViolationBinding, Violation>(callback) {
     override val itemLayoutId = R.layout.item_violation
 
@@ -25,6 +27,8 @@ class ViolationAdapter(
             violation = item
 
             lifecycleOwner = owner
+
+            onLoadImage(item, binding.imageViolation)
 
             root.setOnClickListener { onClickViolation(item) }
             buttonApprove.setOnClickListener { onVerifyViolation(item, true) }
