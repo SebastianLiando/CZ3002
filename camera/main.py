@@ -73,15 +73,15 @@ def parse_args():
     parser.add_argument(
         '--ssrnet_prefix',
         type=str,
-        default='gender_recognition/ssr2_imdb_gender/model',
-        help='prefix (path) for gender recognition model',
+        default='gender_classification/ssr2_imdb_gender/model',
+        help='prefix (path) for gender classification model',
     )
 
     parser.add_argument(
         '--ssrnet_epoch_num',
         type=int,
         default=0,
-        help='epoch at which gender recognition model was saved',
+        help='epoch at which gender classification model was saved',
     )
 
     return parser.parse_args()

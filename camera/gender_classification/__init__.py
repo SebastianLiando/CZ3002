@@ -1,1 +1,1 @@
-from gender_classifier import GenderClassifier, SSRNet
+from .gender_classifier import GenderClassifier, SSRNet

@@ -1,1 +1,1 @@
-from face_detector import FaceDetector, LFFD
+from .face_detector import FaceDetector, LFFD

@@ -1,1 +1,1 @@
-from notifier import Notifier
+from .notifier import Notifier
