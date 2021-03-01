@@ -64,8 +64,8 @@ class Camera:
                     resize_scale=1,
                     score_threshold=0.8,
                     top_k=5,
-                    NMS_threshold=0.4,
-                    NMS_flag=True,
+                    nms_threshold=0.4,
+                    nms_flag=True,
                     skip_scale_branch_list=[],
                 )
 
