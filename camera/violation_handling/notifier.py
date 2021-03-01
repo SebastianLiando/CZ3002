@@ -1,10 +1,11 @@
+import cv2
 import firebase_admin
+import io
 import json
 import numpy as np
 import os
 import threading
 
-from base64 import b64encode
 from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import messaging
@@ -20,11 +21,16 @@ def notify(
 ):
     try:
         image_id = str(uuid4())
-        encoded_image = b64encode(image)
+        
+        # encode image for sending
+        _, encoded_image = cv2.imencode('.png', image)
+        io_buffer = io.BytesIO(encoded_image)
 
+        # send image to Cloud Storage
         blob = storage_bucket.blob(image_id)
-        blob.upload_from_string(encoded_image, content_type='image/png')
+        blob.upload_from_file(io_buffer, content_type='image/png')
 
+        # update Realtime Database
         violation_info['imageId'] = image_id
         database_reference.push(violation_info)
 
@@ -38,11 +44,12 @@ def notify(
             topic=location,
         )
 
+        # send notification with Cloud Messaging
         response = messaging.send(message)
         print(f'successfully send notification: {response}')
     
     except Exception as error:
-        print(error)
+        print(f'failed to send notification - {error}')
 
 
 class Notifier:
