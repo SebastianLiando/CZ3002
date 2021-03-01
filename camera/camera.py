@@ -68,6 +68,9 @@ class Camera:
             print('failed to open camera')
             return
 
+        frame_width = int(video_capture.get(cv2.CAP_PROP_FRAME_WIDTH))
+        frame_height = int(video_capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
         try:
             while True:
                 read_success, frame = video_capture.read()
@@ -79,9 +82,9 @@ class Camera:
                 bboxes = self.face_detector.predict(
                     frame,
                     resize_scale=1,
-                    score_threshold=0.8,
-                    top_k=5,
-                    nms_threshold=0.4,
+                    score_threshold=score_threshold,
+                    top_k=top_k,
+                    nms_threshold=nms_threshold,
                     nms_flag=True,
                     skip_scale_branch_list=[],
                 )
@@ -96,8 +99,8 @@ class Camera:
                     bbox = (
                         max(bbox[0] - left_padding, 0),
                         max(bbox[1] - top_padding, 0),
-                        min(bbox[2] + right_padding, 640),
-                        min(bbox[3] + bottom_padding, 480),
+                        min(bbox[2] + right_padding, frame_width),
+                        min(bbox[3] + bottom_padding, frame_height),
                     )
 
                     face = frame[bbox[1]: bbox[3], bbox[0]: bbox[2]]
