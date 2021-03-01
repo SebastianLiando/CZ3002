@@ -14,8 +14,8 @@ Use a computer's webcam as the surveillance camera.
 2. activate virtual environment: `conda activate cz3002_venv`
 3. install pip dependencies: `pip install -r requirements.txt`
 4. deactivate virtual environment when done: `conda deactivate`
-5. get your Firebase Service Account key and save it in the directory `violation_handling` as `key.json`
-6. create `config.json` in the directory `violation_handling`
+5. get your Firebase Service Account key and save it in the directory `configurations` as `key.json`
+6. create `config.json` in the directory `configurations`
     -  format: `{"databaseURL": "<database URL copied from Firebase console>", "storageBucket": "<storage bucket copied from Firebase console, without starting 'gs://' and ending '/'>"}`
 
 ## how to run demo

@@ -1,6 +1,4 @@
-# sensitive info
-config.json
-*key*.json
+# generic Python .gitignore
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

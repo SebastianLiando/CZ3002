@@ -84,6 +84,20 @@ def parse_args():
         help='epoch at which gender classification model was saved',
     )
 
+    parser.add_argument(
+        '--config_file_path',
+        type=str,
+        default='configurations/config.json',
+        help='path to configuration file for camera notification',
+    )
+
+    parser.add_argument(
+        '--key_file_path',
+        type=str,
+        default='configurations/key.json',
+        help='path to key for notification SDK',
+    )
+
     return parser.parse_args()
 
 
@@ -103,7 +117,7 @@ def main(args):
         epoch=args.ssrnet_epoch_num,
     )
 
-    notifier = Notifier()
+    notifier = Notifier(args.config_file_path, args.key_file_path)
 
     camera = Camera(
         args.toilet_gender,

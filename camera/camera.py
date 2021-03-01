@@ -16,7 +16,7 @@ class Camera:
     :param notification_interval: (int) time in seconds between each notification  
     :param face_detector: (FaceDetector) face detection model  
     :param gender_classifier: (GenderClassifier) gender classification model  
-    :param notifier: (Notifier) TODO  
+    :param notifier: (Notifier) object that handles sending notification  
     '''
     def __init__(
         self,
@@ -36,20 +36,37 @@ class Camera:
         self.gender_classifier = gender_classifier
         self.notifier = notifier
 
-        # can notify immediately
+        # so that camera can notify immediately
         self.last_violation_time = time.time() - notification_interval
 
-    def run(self, debug: bool = False):
+    def run(
+        self,
+        debug: bool = False,
+        score_threshold: float = 0.8,
+        top_k: int = 5,
+        nms_threshold: float = 0.4,
+        left_padding: int = 20,
+        top_padding: int = 50,
+        right_padding: int = 20,
+        bottom_padding: int = 30,
+    ):
+        '''
+        Run the camera
+
+        :param debug: (bool) whether to show what the camera sees [default: False]  
+        :param score_threshold: (float) threshold for face detection confidence score, below which bounding box is discarded [default: 0.8]  
+        :param top_k: (int) maximum number of faces that can be detected [default: 5]  
+        :param nms_threshold: (float) overlap threshold for non-maximum suppression, above which bounding box is discarded [default: 0.4]  
+        :param left_padding: (int) amount to pad bounding box on the left by, when cropping image for gender classification [default: 20]  
+        :param top_padding: (int) amount to pad bounding box on top by, when cropping image for gender classification [default: 50]  
+        :param right_padding: (int) amount to pad bounding box on the right by, when cropping image for gender classification [default: 20]  
+        :param bottom_padding: (int) amount to pad bounding box at the bottom by, when cropping image for gender classification [default: 30]  
+        '''
         video_capture = cv2.VideoCapture(0)  # use web cam
 
         if not video_capture.isOpened():
             print('failed to open camera')
             return
-        
-        # TODO: refactor
-        top_margin = 50
-        bottom_margin = 30
-        horizontal_margin = 20
 
         try:
             while True:
@@ -77,10 +94,10 @@ class Camera:
                         continue  # empty bbox
 
                     bbox = (
-                        max(bbox[0] - horizontal_margin, 0),
-                        max(bbox[1] - top_margin, 0),
-                        min(bbox[2] + horizontal_margin, 640),
-                        min(bbox[3] + bottom_margin, 480),
+                        max(bbox[0] - left_padding, 0),
+                        max(bbox[1] - top_padding, 0),
+                        min(bbox[2] + right_padding, 640),
+                        min(bbox[3] + bottom_padding, 480),
                     )
 
                     face = frame[bbox[1]: bbox[3], bbox[0]: bbox[2]]
@@ -111,7 +128,7 @@ class Camera:
                             )
 
                     if debug:
-                        frame = cv2.rectangle(
+                        debug_frame = cv2.rectangle(
                             frame,
                             (bbox[0], bbox[1]),  # top-left point
                             (bbox[2], bbox[3]),  # bottom-right point
@@ -119,8 +136,8 @@ class Camera:
                             thickness=2,
                         )
 
-                        frame = cv2.putText(
-                            frame,
+                        debug_frame = cv2.putText(
+                            debug_frame,
                             f'{gender} {confidence:.2f} {gender_score:.2f}',
                             (bbox[0], bbox[1] + 25),  # top-left point
                             fontFace=cv2.FONT_HERSHEY_SIMPLEX,
@@ -130,7 +147,7 @@ class Camera:
                         )
                 
                 if debug:
-                    cv2.imshow('camera', frame)
+                    cv2.imshow('camera', debug_frame)
 
                 if cv2.waitKey(1) == ord('q'):  # press q to stop
                     break

@@ -25,7 +25,7 @@ class SSRNet(GenderClassifier):
     Soft Stagewise Regression Network
 
     :param prefix: (str) prefix of path to model  
-    :param epoch: (int) TODO  
+    :param epoch: (int) training epoch at which model is saved  
     :param input_height: (int) input height of the model  
     :param input_width: (int) input width of the model  
     '''
