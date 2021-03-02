@@ -1,12 +1,7 @@
 package com.guavas.cz3002.data.violation
 
-import android.text.format.DateUtils
-import androidx.lifecycle.asLiveData
+import com.google.firebase.database.Exclude
 import com.guavas.cz3002.utils.Gender
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flow
-import java.util.*
 
 /**
  * Holds violation details.
@@ -21,7 +16,7 @@ import java.util.*
  * @property timestamp The time the violation happened in milliseconds since epoch.
  */
 data class Violation(
-    var id: String = "",
+    @get:Exclude var id: String = "",
     var location: String = "",
     @get:JvmName("getIsTrue") var isTrue: Boolean = false,
     var verifiedBy: String? = null,
@@ -31,20 +26,29 @@ data class Violation(
     var timestamp: Double = -1.0,
 ) {
     /** Returns `true` if this violation is a false positive. */
+    @get:Exclude
     val isFalsePositive
         get() = !isTrue && isVerified
 
     /** Returns `true` if this violation has been verified. */
+    @get:Exclude
     val isVerified
         get() = verifiedBy != null
 
     /** The gender of the toilet. */
+    @get:Exclude
     val locationGenderEnum
         get() = mapIntToGender(locationGender)
 
     /** The gender of the person entering the toilet. */
+    @get:Exclude
     val detectedGenderEnum
         get() = mapIntToGender(detectedGender)
+
+    /** Timestamp adjusted to Java's timestamp value. */
+    @get:Exclude
+    val adjustedTimestamp
+        get() = (timestamp * 1000).toLong()
 
     private fun mapIntToGender(value: Int) =
         when (value) {
@@ -52,21 +56,12 @@ data class Violation(
             1 -> Gender.MALE
             else -> throw IllegalStateException("Unknown gender! Got value $value")
         }
-
-    /** The time that has passed since the violation happened. */
-    val elapsedTime
-        get() = flow {
-            while (true) {
-                val span = DateUtils.getRelativeTimeSpanString(
-                    (timestamp * 1000).toLong(), // Add millisecond to consideration
-                    Date().time,
-                    DateUtils.MINUTE_IN_MILLIS
-                )
-
-                emit(span.toString())
-
-                delay(1000)
-            }
-        }.distinctUntilChanged()
-            .asLiveData()
 }
+
+/**
+ * Data for displaying list of violations.
+ *
+ * @property violation The violation data.
+ * @property timeString The elapsed time.
+ */
+data class ViolationListItem(val violation: Violation, val timeString: String)

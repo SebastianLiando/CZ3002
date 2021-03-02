@@ -27,11 +27,11 @@ class LoginFragmentViewModel @Inject constructor(
      *
      * @return `true` if the user has successfully signed in.
      */
-    suspend fun signIn(email: String, password: String) =
-        suspendCancellableCoroutine<Boolean> { cont ->
-            _isLoading.value = true
-            _errorMessage.value = ""
+    suspend fun signIn(email: String, password: String): Boolean {
+        _isLoading.value = true
+        _errorMessage.value = ""
 
+        return suspendCancellableCoroutine { cont ->
             firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener {
                     _isLoading.value = false
@@ -44,4 +44,5 @@ class LoginFragmentViewModel @Inject constructor(
                     }
                 }
         }
+    }
 }

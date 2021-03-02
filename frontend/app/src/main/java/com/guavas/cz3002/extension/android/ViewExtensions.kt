@@ -1,6 +1,7 @@
 package com.guavas.cz3002.extension.android
 
 import android.view.View
+import android.view.ViewTreeObserver
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
 import androidx.navigation.NavDirections
@@ -49,4 +50,17 @@ fun View.dynamicVisibility(isVisible: Boolean?) {
 @BindingAdapter("canVisible")
 fun View.dynamicInvisibleVisibility(isVisible: Boolean?) {
     visibility = if (isVisible != null && isVisible) View.VISIBLE else View.INVISIBLE
+}
+
+fun <T : View> T.doOnGlobalLayout(block: (T) -> Unit) {
+    val tree = viewTreeObserver
+
+    tree.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            if (width != 0 && height != 0 && viewTreeObserver.isAlive) {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+                block(this@doOnGlobalLayout)
+            }
+        }
+    })
 }
