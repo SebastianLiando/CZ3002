@@ -1,10 +1,11 @@
+import cv2
 import firebase_admin
+import io
 import json
 import numpy as np
 import os
 import threading
 
-from base64 import b64encode
 from firebase_admin import credentials
 from firebase_admin import db
 from firebase_admin import messaging
@@ -14,17 +15,30 @@ from uuid import uuid4
 
 def notify(
     database_reference: db.Reference,
-    storage_bucket,
+    storage_bucket,  # TODO: figure out type of storage bucket
     violation_info: dict,
     image: np.ndarray,
 ):
+    '''
+    Notify frontend of violation
+
+    :param database_reference: (db.Reference) the Realtime Data for sending violation information to  
+    :param storage_bucket: the Google Storage Bucket for sending the image to  
+    :param violation_info: (dict) information regarding the violation  
+    :param image: (np.ndarray) image captured of the perpetrator
+    '''
     try:
         image_id = str(uuid4())
-        encoded_image = b64encode(image)
+        
+        # encode image for sending
+        _, encoded_image = cv2.imencode('.png', image)
+        io_buffer = io.BytesIO(encoded_image)
 
+        # send image to Cloud Storage
         blob = storage_bucket.blob(image_id)
-        blob.upload_from_string(encoded_image, content_type='image/png')
+        blob.upload_from_file(io_buffer, content_type='image/png')
 
+        # update Realtime Database
         violation_info['imageId'] = image_id
         database_reference.push(violation_info)
 
@@ -38,23 +52,25 @@ def notify(
             topic=location,
         )
 
+        # send notification with Cloud Messaging
         response = messaging.send(message)
         print(f'successfully send notification: {response}')
     
     except Exception as error:
-        print(error)
+        print(f'failed to send notification - {error}')
 
 
 class Notifier:
-    def __init__(self):
-        # config and key should be placed in same directory
-        dir_path = os.path.dirname(__file__)
+    '''
+    Handles sending of notification when a violation occurs
 
-        config_file_path = os.path.join(dir_path, 'config.json')
+    :param config_file_path: (str) path to configuration file for camera notification  
+    :param key_file_path: (str) path to key for notification SDK  
+    '''
+    def __init__(self, config_file_path: str, key_file_path: str):
         with open(config_file_path) as config_file:
             config = json.load(config_file)
 
-        key_file_path = os.path.join(dir_path, 'key.json')
         credential = credentials.Certificate(key_file_path)
 
         firebase_admin.initialize_app(
@@ -71,6 +87,12 @@ class Notifier:
         print('instantiated notifier')
 
     def notify(self, violation_info: dict, image: np.ndarray):
+        '''
+        Notify frontend of violation
+
+        :param violation_info: (dict) information regarding the violation  
+        :param image: (np.ndarray) image captured of the perpetrator
+        '''
         threading.Thread(
             target=notify,
             args=(

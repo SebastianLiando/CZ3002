@@ -8,9 +8,9 @@ import numpy as np
 import os
 
 from camera import Camera
-from face_detection.lffd import LFFD
-from gender_recognition.ssrnet import SSRNet
-from violation_handling.notifier import Notifier
+from face_detection import LFFD
+from gender_classification import SSRNet
+from violation_handling import Notifier
 
 
 def parse_args():
@@ -73,15 +73,29 @@ def parse_args():
     parser.add_argument(
         '--ssrnet_prefix',
         type=str,
-        default='gender_recognition/ssr2_imdb_gender/model',
-        help='prefix (path) for gender recognition model',
+        default='gender_classification/ssr2_imdb_gender/model',
+        help='prefix (path) for gender classification model',
     )
 
     parser.add_argument(
         '--ssrnet_epoch_num',
         type=int,
         default=0,
-        help='epoch at which gender recognition model was saved',
+        help='epoch at which gender classification model was saved',
+    )
+
+    parser.add_argument(
+        '--config_file_path',
+        type=str,
+        default='configurations/config.json',
+        help='path to configuration file for camera notification',
+    )
+
+    parser.add_argument(
+        '--key_file_path',
+        type=str,
+        default='configurations/key.json',
+        help='path to key for notification SDK',
     )
 
     return parser.parse_args()
@@ -98,22 +112,22 @@ def main(args):
         model_file_path=args.lffd_model_file_path,
     )
 
-    gender_recogniser = SSRNet(
+    gender_classifier = SSRNet(
         prefix=args.ssrnet_prefix,
         epoch=args.ssrnet_epoch_num,
     )
 
-    notifier = Notifier()
+    notifier = Notifier(args.config_file_path, args.key_file_path)
 
     camera = Camera(
         args.toilet_gender,
         args.toilet_location,
         args.notification_interval,
         face_detector,
-        gender_recogniser,
+        gender_classifier,
         notifier,
     )
-    camera.run(args)
+    camera.run(debug=args.debug)
 
 
 if __name__ == '__main__':

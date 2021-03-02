@@ -6,10 +6,26 @@ import mxnet as mx
 import numpy as np
 
 
-class SSRNet:
+class GenderClassifier:
+    '''
+    Interface for gender classification model.
+
+    Must implement the predict() method.  
+    predict() must accept an image (np.ndarray) as argument.
+    '''
+    def __init__(self):
+        raise NotImplementedError('NotImplementedError: attempted usage of abstract gender classifier')
+
+    def predict(self, image: np.ndarray):
+        raise NotImplementedError('NotImplementedError: attempted usage of abstract gender classifier')
+
+
+class SSRNet(GenderClassifier):
     '''
     Soft Stagewise Regression Network
 
+    :param prefix: (str) prefix of path to model  
+    :param epoch: (int) training epoch at which model is saved  
     :param input_height: (int) input height of the model  
     :param input_width: (int) input width of the model  
     '''
@@ -56,7 +72,7 @@ class SSRNet:
         Forward pass / inference
 
         :param image: (np.ndarray) input image  
-        :return: (int) 1 (male) or 0 (female)  
+        :return: (tuple) gender, score  
         '''
         image = cv2.resize(image, (self.input_height, self.input_width))
 
