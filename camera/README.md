@@ -35,8 +35,8 @@ example `camera_config.json`:
         "ssrnet_epoch_num": 0
     },
     "violation_handling": {
-        "databaseURL": "https://cz3002-xxxxx-default-rtdb.firebaseio.com/",
-        "storageBucket": "cz3002-xxxxx.appspot.com"
+        "database_url": "https://cz3002-xxxxx-default-rtdb.firebaseio.com/",
+        "storage_bucket": "cz3002-xxxxx.appspot.com"
     }
 }
 ```
@@ -59,8 +59,8 @@ description of each property in `camera_config.json`:
         "ssrnet_epoch_num": "epoch at which gender classification model was saved"
     },
     "violation_handling": {
-        "databaseURL": "database URL copied from Firebase console",
-        "storageBucket": "storage bucket copied from Firebase console, without starting 'gs://' and ending '/'"
+        "database_url": "database URL copied from Firebase console",
+        "storage_bucket": "storage bucket copied from Firebase console, without starting 'gs://' and ending '/'"
     }
 }
 ```
