@@ -1,18 +1,28 @@
 package com.guavas.cz3002.data.violation
 
+import android.widget.ImageView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
+import com.google.firebase.storage.FirebaseStorage
+import com.guavas.cz3002.utils.GlideApp
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.coroutines.resume
 
-class ViolationRepository @Inject constructor(private val database: FirebaseDatabase) {
+class ViolationRepository @Inject constructor(
+    private val database: FirebaseDatabase,
+    private val storage: FirebaseStorage
+) {
+    private val violationRef by lazy { database.reference.child(VIOLATION_PATH) }
+
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getViolations(location: String) = callbackFlow<List<Violation>> {
         val listener = object : ValueEventListener {
@@ -31,15 +41,45 @@ class ViolationRepository @Inject constructor(private val database: FirebaseData
             }
         }
 
-        val query = database.reference.child(VIOLATION_PATH)
-            .orderByChild(LOCATION_KEY)
+        val dataPath = violationRef.orderByChild(LOCATION_KEY)
+
+        dataPath.keepSynced(true)
+
+        val query = dataPath
             .equalTo(location)
             .apply {
                 addValueEventListener(listener)
             }
 
-        awaitClose { query.removeEventListener(listener) }
+        awaitClose {
+            query.removeEventListener(listener)
+        }
     }
+
+    fun loadViolationImage(view: ImageView, violation: Violation) {
+        val ref = storage.reference.child(violation.imageId)
+
+        GlideApp.with(view.context)
+            .load(ref)
+            .error(android.R.color.darker_gray)
+            .into(view)
+    }
+
+    /**
+     * Verifies a violation.
+     *
+     * @param violation The violation to be verified.
+     * @param isTrue `true` if it is not a false positive.
+     * @param uid The user id that verifies.
+     */
+    suspend fun verifyViolation(violation: Violation, isTrue: Boolean, uid: String) =
+        suspendCancellableCoroutine<Boolean> { cont ->
+            violationRef.child(violation.id)
+                .setValue(violation.copy(verifiedBy = uid, isTrue = isTrue))
+                .addOnCompleteListener { task ->
+                    cont.resume(task.isSuccessful)
+                }
+        }
 
     companion object {
         const val VIOLATION_PATH = "violations"

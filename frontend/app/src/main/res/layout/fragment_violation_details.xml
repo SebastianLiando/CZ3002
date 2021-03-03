@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.guavas.cz3002.utils.Gender" />
+
+        <variable
+            name="fragment"
+            type="com.guavas.cz3002.ui.violation.ViolationDetailsFragment" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionGroup="true"
+        android:transitionName="@string/transition_name_details"
+        tools:context=".ui.violation.ViolationDetailsFragment">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:id="@+id/imageViolation"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@string/content_desc_violation_image"
+                android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="1.4"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@android:color/darker_gray" />
+
+            <ImageView
+                android:id="@+id/imageLocation"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/content_desc_ic_location"
+                android:src="@drawable/ic_location"
+                app:layout_constraintEnd_toStartOf="@id/textLocation"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imageViolation" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textLocation"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@{fragment.viewModel.location}"
+                app:layout_constraintBottom_toBottomOf="@id/imageLocation"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/imageLocation"
+                app:layout_constraintTop_toTopOf="@id/imageLocation"
+                tools:text="N3-01-01" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textTimestamp"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAlignment="center"
+                app:layout_constraintTop_toBottomOf="@id/textLocation"
+                app:timestampText="@{fragment.viewModel.violation.adjustedTimestamp}"
+                tools:text="24 January 2021, 09:00" />
+
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/TextAppearance.MaterialComponents.Headline6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{fragment.viewModel.violation.isTrue ? @string/label_true_violation : @string/label_false_positive}"
+                app:isVisible="@{fragment.viewModel.violation.verified}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/imagePersonGender"
+                tools:text="@string/label_true_violation" />
+
+            <androidx.constraintlayout.widget.Group
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:constraint_referenced_ids="buttonReject,buttonApprove"
+                app:isVisible="@{!fragment.viewModel.violation.verified}"
+                tools:visibility="invisible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonApprove"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:onClick="@{() -> fragment.verifyViolation(true)}"
+                android:text="@string/button_approve"
+                app:layout_constraintBottom_toTopOf="@id/buttonReject"
+                app:layout_constraintTop_toBottomOf="@id/imagePersonGender"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonReject"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:onClick="@{() -> fragment.verifyViolation(false)}"
+                android:text="@string/button_reject"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/buttonApprove" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/labelPersonGender"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/label_person_gender"
+                app:layout_constraintEnd_toStartOf="@id/labelToiletGender"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textTimestamp" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/labelToiletGender"
+                style="@style/TextAppearance.MaterialComponents.Body1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/label_toilet_gender"
+                app:layout_constraintBottom_toBottomOf="@id/labelPersonGender"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/labelPersonGender"
+                app:layout_constraintTop_toTopOf="@id/labelPersonGender" />
+
+            <ImageView
+                android:id="@+id/imagePersonGender"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/content_desc_person_gender"
+                android:src="@{fragment.viewModel.violation.detectedGenderEnum == Gender.MALE ? @drawable/ic_man : @drawable/ic_woman}"
+                app:layout_constraintEnd_toEndOf="@id/labelPersonGender"
+                app:layout_constraintStart_toStartOf="@id/labelPersonGender"
+                app:layout_constraintTop_toBottomOf="@id/labelPersonGender"
+                tools:src="@drawable/ic_man" />
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:contentDescription="@string/content_desc_toilet_gender"
+                android:src="@{fragment.viewModel.violation.locationGenderEnum == Gender.MALE ? @drawable/ic_man : @drawable/ic_woman}"
+                app:layout_constraintBottom_toBottomOf="@id/imagePersonGender"
+                app:layout_constraintEnd_toEndOf="@id/labelToiletGender"
+                app:layout_constraintStart_toStartOf="@id/labelToiletGender"
+                app:layout_constraintTop_toTopOf="@id/imagePersonGender"
+                tools:src="@drawable/ic_woman" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

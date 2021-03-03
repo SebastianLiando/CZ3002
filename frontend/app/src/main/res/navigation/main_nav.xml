@@ -18,10 +18,22 @@
         <action
             android:id="@+id/action_violationsFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_violationsFragment_to_violationDetailsFragment"
+            app:destination="@id/violationDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.guavas.cz3002.ui.auth.ProfileFragment"
         android:label="fragment_profile"
         tools:layout="@layout/fragment_profile" />
+    <fragment
+        android:id="@+id/violationDetailsFragment"
+        android:name="com.guavas.cz3002.ui.violation.ViolationDetailsFragment"
+        android:label="fragment_violation_details"
+        tools:layout="@layout/fragment_violation_details" >
+        <argument
+            android:name="violationId"
+            app:argType="string" />
+    </fragment>
 </navigation>
