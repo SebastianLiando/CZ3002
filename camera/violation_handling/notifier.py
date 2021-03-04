@@ -54,7 +54,7 @@ def notify(
 
         # send notification with Cloud Messaging
         response = messaging.send(message)
-        print(f'successfully send notification: {response}')
+        print(f'successfully sent notification: {response}')
     
     except Exception as error:
         print(f'failed to send notification - {error}')
@@ -64,20 +64,24 @@ class Notifier:
     '''
     Handles sending of notification when a violation occurs
 
-    :param config_file_path: (str) path to configuration file for camera notification  
+    :param database_url: (str) database URL copied from Firebase console  
+    :param storage_bucket: (str) storage bucket copied from Firebase console  
     :param key_file_path: (str) path to key for notification SDK  
     '''
-    def __init__(self, config_file_path: str, key_file_path: str):
-        with open(config_file_path) as config_file:
-            config = json.load(config_file)
+    def __init__(
+        self,
+        database_url: str,
+        storage_bucket: str,
+        key_file_path: str,
+    ):
 
         credential = credentials.Certificate(key_file_path)
 
         firebase_admin.initialize_app(
             credential=credential,
             options={
-                'databaseURL': config['databaseURL'],
-                'storageBucket': config['storageBucket'],
+                'databaseURL': database_url,
+                'storageBucket': storage_bucket,
             },
         )
 

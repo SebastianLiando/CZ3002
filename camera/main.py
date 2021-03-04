@@ -3,6 +3,7 @@ Demo for face detection and gender recognition using computer's webcam
 '''
 import argparse
 import cv2
+import json
 import mxnet as mx
 import numpy as np
 import os
@@ -29,66 +30,10 @@ def parse_args():
     )
 
     parser.add_argument(
-        '--camera_id',
-        type=str,
-        default='0',
-        help='id of the camera',
-    )
-
-    parser.add_argument(
-        '--toilet_gender',
-        type=int,
-        default='0',
-        help='the gender of the toilet being monitored by the camera (0 for female, 1 for male)',
-    )
-
-    parser.add_argument(
-        '--toilet_location',
-        type=str,
-        default='N3-01-01',
-        help='location of the toilet being monitored by the camera',
-    )
-
-    parser.add_argument(
-        '--notification_interval',
-        type=int,
-        default=5,
-        help='time interval (in seconds) between each notification',
-    )
-
-    parser.add_argument(
-        '--lffd_symbol_file_path',
-        type=str,
-        default='face_detection/model/symbol_10_560_25L_8scales_v1_deploy.json',
-        help='path to symbol file of face detection model',
-    )
-
-    parser.add_argument(
-        '--lffd_model_file_path',
-        type=str,
-        default='face_detection/model/train_10_560_25L_8scales_v1_iter_1400000.params',
-        help='path to model params of face detection model',
-    )
-
-    parser.add_argument(
-        '--ssrnet_prefix',
-        type=str,
-        default='gender_classification/ssr2_imdb_gender/model',
-        help='prefix (path) for gender classification model',
-    )
-
-    parser.add_argument(
-        '--ssrnet_epoch_num',
-        type=int,
-        default=0,
-        help='epoch at which gender classification model was saved',
-    )
-
-    parser.add_argument(
         '--config_file_path',
         type=str,
-        default='configurations/config.json',
-        help='path to configuration file for camera notification',
+        default='configurations/camera_config.json',
+        help='path to configuration file for camera',
     )
 
     parser.add_argument(
@@ -101,45 +46,52 @@ def parse_args():
     return parser.parse_args()
 
 
-def main(args):
+def main(debug: bool, config: dict, key_file_path: str,):
     '''
     The main program
-    '''   
+
+    :param debug: (bool) whether to show what the camera sees
+    :param config: (dict) camera configurations
+    :param key_file_path: (str) path to key for notification SDK  
+    '''
     context = mx.cpu()
     
+    face_detector_config = config['face_detection']
     face_detector = LFFD(
-        symbol_file_path=args.lffd_symbol_file_path,
-        model_file_path=args.lffd_model_file_path,
+        symbol_file_path=face_detector_config['lffd_symbol_file_path'],
+        model_file_path=face_detector_config['lffd_model_file_path'],
     )
 
+    gender_classifier_config = config['gender_classification']
     gender_classifier = SSRNet(
-        prefix=args.ssrnet_prefix,
-        epoch=args.ssrnet_epoch_num,
+        prefix=gender_classifier_config['ssrnet_prefix'],
+        epoch=gender_classifier_config['ssrnet_epoch_num'],
     )
 
-    notifier = Notifier(args.config_file_path, args.key_file_path)
+    notifier_config = config['violation_handling']
+    notifier = Notifier(
+        database_url=notifier_config['database_url'],
+        storage_bucket=notifier_config['storage_bucket'],
+        key_file_path=key_file_path,
+    )
 
+    camera_info = config['camera_information']
     camera = Camera(
-        args.toilet_gender,
-        args.toilet_location,
-        args.notification_interval,
-        face_detector,
-        gender_classifier,
-        notifier,
+        toilet_gender=camera_info['toilet_gender'],
+        toilet_location=camera_info['toilet_location'],
+        notification_interval=camera_info['notification_interval'],
+        face_detector=face_detector,
+        gender_classifier=gender_classifier,
+        notifier=notifier,
     )
-    camera.run(debug=args.debug)
+    camera.run(debug=debug)
 
 
 if __name__ == '__main__':
     args = parse_args()
 
-    if not os.path.exists(args.lffd_symbol_file_path):
-        print('The symbol file does not exist!')
-        exit(1)
-    
-    if not os.path.exists(args.lffd_model_file_path):
-        print('The model file does not exist!')
-        exit(1)
-    
-    main(args)
+    with open(args.config_file_path) as config_file:
+        config = json.load(config_file)
+
+    main(args.debug, config, args.key_file_path)
     print('\ncamera stopped')

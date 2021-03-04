@@ -15,8 +15,55 @@ Use a computer's webcam as the surveillance camera.
 3. install pip dependencies: `pip install -r requirements.txt`
 4. deactivate virtual environment when done: `conda deactivate`
 5. get your Firebase Service Account key and save it in the directory `configurations` as `key.json`
-6. create `config.json` in the directory `configurations`
-    -  format: `{"databaseURL": "<database URL copied from Firebase console>", "storageBucket": "<storage bucket copied from Firebase console, without starting 'gs://' and ending '/'>"}`
+6. create `camera_config.json` in the directory `configurations`
+
+example `camera_config.json`:
+
+```json
+{
+    "camera_information": {
+        "toilet_gender": 0,
+        "toilet_location": "N3-01-01",
+        "notification_interval": 5
+    },
+    "face_detection": {
+        "lffd_symbol_file_path": "face_detection/model/symbol_10_560_25L_8scales_v1_deploy.json",
+        "lffd_model_file_path": "face_detection/model/train_10_560_25L_8scales_v1_iter_1400000.params"
+    },
+    "gender_classification": {
+        "ssrnet_prefix": "gender_classification/ssr2_imdb_gender/model",
+        "ssrnet_epoch_num": 0
+    },
+    "violation_handling": {
+        "database_url": "https://cz3002-xxxxx-default-rtdb.firebaseio.com/",
+        "storage_bucket": "cz3002-xxxxx.appspot.com"
+    }
+}
+```
+
+description of each property in `camera_config.json`:
+
+```json
+{
+    "camera_information": {
+        "toilet_gender": "the gender of the toilet being monitored by the camera (0 for female, 1 for male)",
+        "toilet_location": "location of the toilet being monitored by the camera",
+        "notification_interval": "time interval (in seconds) between each notification"
+    },
+    "face_detection": {
+        "lffd_symbol_file_path": "path to symbol file of face detection model",
+        "lffd_model_file_path": "path to model params of face detection model"
+    },
+    "gender_classification": {
+        "ssrnet_prefix": "prefix of the path for gender classification model",
+        "ssrnet_epoch_num": "epoch at which gender classification model was saved"
+    },
+    "violation_handling": {
+        "database_url": "database URL copied from Firebase console",
+        "storage_bucket": "storage bucket copied from Firebase console, without starting 'gs://' and ending '/'"
+    }
+}
+```
 
 ## how to run demo
 
@@ -28,6 +75,6 @@ Use a computer's webcam as the surveillance camera.
 
 ## TODO
 
-- write unit tests
-- refactor code
+- write more unit tests
+- refactor code more
 - update documentation
