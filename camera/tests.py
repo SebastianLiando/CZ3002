@@ -23,7 +23,7 @@ male_face_image_path = 'images/Edward_Snowden_face.jpg'
 
 
 class TestLFFD(unittest.TestCase):
-    
+
     def test_detect_female(self):
         face_detector = LFFD(
             symbol_file_path=lffd_symbol_file_path,
