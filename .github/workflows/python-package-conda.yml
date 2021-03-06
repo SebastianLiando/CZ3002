@@ -25,16 +25,18 @@ jobs:
       run: |
         conda env update --file environment.yml --name base
     - name: Create virtual environment
+      working-directory: ./camera
       run: |
-        conda create --name cz3002_venv --file camera/cz3002_venv.txt
+        conda create --name cz3002_venv --file dependencies/cz3002_venv.txt
     - name: Activate virtual environment
       run: |
         # eval function is needed to make conda activate can run
         eval "$(conda shell.bash hook)"
         conda activate cz3002_venv
     - name: Install pip dependencies
+      working-directory: ./camera
       run: |
-        pip install -r camera/requirements.txt
+        pip install -r dependencies/requirements.txt
     - name: Lint with flake8
       run: |
         conda install flake8
