@@ -9,14 +9,4 @@ source code for CZ3002 Advanced Software Engineering project
 
 ---
 
-## how to run
-
-TODO: instructions on how to run the whole system
-
-## how to set-up
-
-TODO: instructions on how to set-up repo for coding
-
-## how to deploy
-
-TODO: instructions on how to deploy the system as a whole
+refer to the READMEs in `camera`, `frontend` and `server` for instructions on setting up and running
