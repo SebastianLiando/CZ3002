@@ -3,10 +3,14 @@
 Performs face detection and gender classification on a "surveillance camera".
 Use a computer's webcam as the surveillance camera.
 
-## requirements
+---
+
+## pre-set-up requirements
 
 - [anaconda](https://docs.anaconda.com/anaconda/install/)
   - [commands](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf)
+
+---
 
 ## how to set-up
 
@@ -69,6 +73,8 @@ description of each property in `camera_config.json`:
 }
 ```
 
+---
+
 ## how to run demo
 
 1. activate virtual environment: `conda activate cz3002_venv`
@@ -76,9 +82,3 @@ description of each property in `camera_config.json`:
     - view parameters: `python main.py --help`
     - press 'q' key (or 'ctrl-c') to stop demo
 3. deactivate virtual environment when done: `conda deactivate`
-
-## TODO
-
-- write more unit tests
-- refactor code more
-- update documentation
