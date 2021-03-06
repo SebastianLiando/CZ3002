@@ -21,19 +21,23 @@ jobs:
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install conda dependencies
+      working-directory: ./camera
+      run: |
+        conda env update --file dependencies/conda_base_environment.yml --name base
     - name: Create virtual environment
       working-directory: ./camera
       run: |
-        conda create --name cz3002_venv --file dependencies/cz3002_venv.txt
+        conda create --name cz3002_venv --file dependencies/cz3002_venv_linux.txt
     - name: Activate virtual environment
       run: |
-        # eval function is needed to make conda activate can run
+        # eval function is needed to make conda activate able to run
         eval "$(conda shell.bash hook)"
         conda activate cz3002_venv
     - name: Install pip dependencies
       working-directory: ./camera
       run: |
-        pip install -r dependencies/requirements.txt
+        pip install -r dependencies/requirements_linux.txt
     - name: Lint with flake8
       run: |
         conda install flake8
@@ -41,9 +45,6 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Install pytest
-      run: |
-        conda install pytest
     - name: Install opencv
       run: |
         # Required for cv2 module
