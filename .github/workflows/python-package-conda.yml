@@ -81,7 +81,6 @@ jobs:
         C:\Miniconda\condabin\conda.bat create --name cz3002_venv --file dependencies/cz3002_venv_windows.txt
     - name: Activate virtual environment
       run: |
-        # eval function is needed to make conda activate able to run
         C:\Miniconda\condabin\conda.bat activate cz3002_venv
     - name: Install pip dependencies
       working-directory: ./camera

@@ -21,9 +21,10 @@ Use a computer's webcam as the surveillance camera.
 3. install pip dependencies
     - on Linux: `pip install -r dependencies/requirements_linux.txt`
     - on Windows: `pip install -r dependencies\requirements_windows.txt`
-4. deactivate virtual environment when done: `conda deactivate`
-5. get your Firebase Service Account key and save it in the directory `configurations` as `key.json`
-6. create `camera_config.json` in the directory `configurations`
+4. install opencv for cv2 module: `pip install opencv-python`
+5. deactivate virtual environment when done: `conda deactivate`
+6. get your Firebase Service Account key and save it in the directory `configurations` as `key.json`
+7. create `camera_config.json` in the directory `configurations`
 
 example `camera_config.json`:
 
