@@ -64,7 +64,6 @@ class TestLFFD(unittest.TestCase):
 
         self.assertEqual(len(bboxes), 1)
 
-
 class TestSSRNet(unittest.TestCase):
 
     def test_classify_female(self):
