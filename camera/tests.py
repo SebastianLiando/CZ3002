@@ -78,7 +78,7 @@ class TestSSRNet(unittest.TestCase):
 
         self.assertEqual(gender, 0)
         self.assertLessEqual(gender_score, 0.1)
-    
+
     def test_classify_male(self):
         gender_classifier = SSRNet(
             prefix=ssrnet_prefix,
