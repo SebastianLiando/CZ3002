@@ -25,6 +25,21 @@ Use a computer's webcam as the surveillance camera.
 5. get your Firebase Service Account key and save it in the directory `configurations` as `key.json`
 6. create `camera_config.json` in the directory `configurations`
 
+**If environment creation fails, you can do so manually.**
+
+### manual creation of environment
+
+1. create the virtual environment: `conda create --name cz3002_venv`
+2. activate the virtual environment: `conda activate`
+3. install OpenCV: `conda install -c conda-forge opencv==4.5.1`
+4. install MXNet
+    - on Linux: `pip install mxnet==1.5.1`
+    - on Windows: `pip install mxnet==1.5.0`
+5. install Firebase admin: `pip install firebase-admin==4.5.2`
+6. deactivate virtual environment when done: `conda deactivate`
+7. get your Firebase Service Account key and save it in the directory `configurations` as `key.json`
+8. create `camera_config.json` in the directory `configurations`
+
 example `camera_config.json`:
 
 ```json

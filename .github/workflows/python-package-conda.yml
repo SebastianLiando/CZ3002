@@ -17,6 +17,17 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.7'
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        # This path is specific to Ubuntu
+        path: |
+          ~/.cache/pip
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements_linux.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-v3-pip-
+          ${{ runner.os }}-
     - name: Add conda to system path
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
@@ -38,6 +49,10 @@ jobs:
       working-directory: ./camera
       run: |
         pip install -r dependencies/requirements_linux.txt
+    - name: Install opencv
+      run: |
+        # Required for cv2 module
+        pip install opencv-python
     - name: Lint with flake8
       run: |
         conda install flake8
@@ -45,10 +60,6 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Install opencv
-      run: |
-        # Required for cv2 module
-        pip install opencv-python
     - name: Run tests.py
       working-directory: ./camera
       run: |
@@ -70,6 +81,17 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.7'
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        # This path is specific to Windows
+        path: |
+          ~\AppData\Local\pip\Cache
+        # Look to see if there is a cache hit for the corresponding requirements file
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements_windows.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-v3-pip-
+          ${{ runner.os }}-
     - name: Install conda dependencies
       working-directory: ./camera
       run: |
@@ -81,12 +103,15 @@ jobs:
         C:\Miniconda\condabin\conda.bat create --name cz3002_venv --file dependencies/cz3002_venv_windows.txt
     - name: Activate virtual environment
       run: |
-        # eval function is needed to make conda activate able to run
         C:\Miniconda\condabin\conda.bat activate cz3002_venv
     - name: Install pip dependencies
       working-directory: ./camera
       run: |
         pip install --user -r dependencies/requirements_windows.txt
+    - name: Install opencv
+      run: |
+        # Required for cv2 module
+        pip install opencv-python
     - name: Lint with flake8
       run: |
         C:\Miniconda\condabin\conda.bat install flake8
@@ -94,10 +119,6 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: Install opencv
-      run: |
-        # Required for cv2 module
-        pip install opencv-python
     - name: Run tests.py
       working-directory: ./camera
       run: |

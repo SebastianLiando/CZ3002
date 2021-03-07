@@ -64,7 +64,6 @@ class TestLFFD(unittest.TestCase):
 
         self.assertEqual(len(bboxes), 1)
 
-
 class TestSSRNet(unittest.TestCase):
 
     def test_classify_female(self):
@@ -78,7 +77,7 @@ class TestSSRNet(unittest.TestCase):
 
         self.assertEqual(gender, 0)
         self.assertLessEqual(gender_score, 0.1)
-    
+
     def test_classify_male(self):
         gender_classifier = SSRNet(
             prefix=ssrnet_prefix,
@@ -90,7 +89,6 @@ class TestSSRNet(unittest.TestCase):
 
         self.assertEqual(gender, 1)
         self.assertGreaterEqual(gender_score, 0.9)
-
 
 if __name__ == '__main__':
     unittest.main()
