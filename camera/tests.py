@@ -90,6 +90,5 @@ class TestSSRNet(unittest.TestCase):
         self.assertEqual(gender, 1)
         self.assertGreaterEqual(gender_score, 0.9)
 
-
 if __name__ == '__main__':
     unittest.main()
