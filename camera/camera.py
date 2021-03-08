@@ -123,6 +123,10 @@ class Camera:
         right_padding: int,
         bottom_padding: int,
     ):
+        # copy frame into another variable to avoid modifying it
+        if debug:
+            debug_frame = frame
+
         for bbox in bboxes:
             confidence = bbox[-1]
             bbox = tuple(map(int, bbox[:4]))  # convert to int
