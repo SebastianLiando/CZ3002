@@ -4,7 +4,7 @@ on:
   push:
     paths:
     - 'camera/**'
-    - '.github/workflows/***'
+    - '.github/workflows/**'
   pull_request:
     branches:
     - main
