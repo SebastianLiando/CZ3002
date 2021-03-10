@@ -7,7 +7,7 @@ Academic Year 2020-2021 Semester 2
 
 source code for CZ3002 Advanced Software Engineering project
 
-![camera-tests](https://github.com/SebastianLiando/CZ3002/actions/workflows/camera-tests.yml/badge.svg)
+[![camera-tests](https://github.com/SebastianLiando/CZ3002/actions/workflows/camera-tests.yml/badge.svg)](https://github.com/SebastianLiando/CZ3002/actions/workflows/camera-tests.yml)
 
 ---
 
