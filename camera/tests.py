@@ -25,6 +25,8 @@ male_face_image_path = 'images/Edward_Snowden_face.jpg'
 class TestLFFD(unittest.TestCase):
 
     def test_detect_female(self):
+        print('Testing detection of a female face')
+
         face_detector = LFFD(
             symbol_file_path=lffd_symbol_file_path,
             model_file_path=lffd_model_file_path,
@@ -45,6 +47,8 @@ class TestLFFD(unittest.TestCase):
         self.assertEqual(len(bboxes), 1)
 
     def test_detect_male(self):
+        print('Testing detection of a male face')
+
         face_detector = LFFD(
             symbol_file_path=lffd_symbol_file_path,
             model_file_path=lffd_model_file_path,
@@ -67,6 +71,8 @@ class TestLFFD(unittest.TestCase):
 class TestSSRNet(unittest.TestCase):
 
     def test_classify_female(self):
+        print('Testing gender classification of a female face')
+
         gender_classifier = SSRNet(
             prefix=ssrnet_prefix,
             epoch=ssrnet_epoch_num,
@@ -79,6 +85,8 @@ class TestSSRNet(unittest.TestCase):
         self.assertLessEqual(gender_score, 0.1)
 
     def test_classify_male(self):
+        print('Testing gender classification of a male face')
+
         gender_classifier = SSRNet(
             prefix=ssrnet_prefix,
             epoch=ssrnet_epoch_num,

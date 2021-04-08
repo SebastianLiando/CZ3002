@@ -66,6 +66,23 @@ class SSRNet(GenderClassifier):
 
         print('loaded SSR-Net successfully\n')
         return module
+
+    def __preprocess_image(self, image: np.ndarray) -> mx.io.DataBatch:
+        image = cv2.resize(image, (self.input_height, self.input_width))
+
+        image = image[:, :, ::-1]
+        image = np.transpose(image, (2, 0, 1))
+
+        input_blob = np.expand_dims(image, axis=0)
+        data = mx.nd.array(input_blob)
+
+        return mx.io.DataBatch(data=(
+            data,
+            mx.nd.array([[0, 1, 2]]),
+            mx.nd.array([[0, 1, 2]]),
+            mx.nd.array([[0, 1, 2]]),
+        ))
+
     
     def predict(self, image: np.ndarray) -> (int, float):
         '''
@@ -74,19 +91,7 @@ class SSRNet(GenderClassifier):
         :param image: (np.ndarray) input image  
         :return: (tuple) gender, score  
         '''
-        image = cv2.resize(image, (self.input_height, self.input_width))
-
-        image = image[:, :, ::-1]
-        image = np.transpose(image, (2, 0, 1))
-
-        input_blob = np.expand_dims(image, axis=0)
-        data = mx.nd.array(input_blob)
-        data_batch = mx.io.DataBatch(data=(
-            data,
-            mx.nd.array([[0, 1, 2]]),
-            mx.nd.array([[0, 1, 2]]),
-            mx.nd.array([[0, 1, 2]]),
-        ))
+        data_batch = self.__preprocess_image(image)
 
         self.model.forward(data_batch, is_train=False)
 
