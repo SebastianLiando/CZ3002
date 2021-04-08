@@ -15,7 +15,7 @@ from uuid import uuid4
 
 def notify(
     database_reference: db.Reference,
-    storage_bucket,  # TODO: figure out type of storage bucket
+    storage_bucket: storage.storage.bucket.Bucket,
     violation_info: dict,
     image: np.ndarray,
 ):

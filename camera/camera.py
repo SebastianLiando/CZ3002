@@ -103,7 +103,7 @@ class Camera:
                 )
 
                 if cv2.waitKey(1) == ord('q'):  # press q to stop
-                    break
+                    raise KeyboardInterrupt()
             
         except KeyboardInterrupt:
             print('stopping camera...')
